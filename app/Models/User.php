@@ -47,4 +47,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function assignedChats()
+    {
+        return $this->belongsToMany(Chat::class, 'chat_teams');
+    } 
+
+    public function packages()
+    {
+        return $this->hasMany(Package::class, 'client_id');
+    }
 }
