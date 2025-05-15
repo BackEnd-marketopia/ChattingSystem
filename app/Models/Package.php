@@ -6,22 +6,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Package extends Model
 {
-    protected $casts = [
-        'limits' => 'array',
+    protected $fillable = [
+        'name',
+        'description',
     ];
 
-    public function user()
+    public function chats()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(Chat::class, 'chat_package')->withTimestamps();
     }
+
+
+    protected $casts = [];
 
     public function items()
     {
         return $this->hasMany(PackageItem::class);
     }
 
-    public function chats()
+    public function clients()
     {
-        return $this->belongsToMany(Chat::class, 'chat_package')->withTimestamps();
+        return $this->belongsToMany(User::class, 'client_package')
+            ->withPivot(['start_date', 'end_date'])
+            ->withTimestamps();
     }
 }

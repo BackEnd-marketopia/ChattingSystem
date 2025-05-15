@@ -4,39 +4,74 @@ namespace App\Repositories\Chat;
 
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class ChatRepository implements ChatRepositoryInterface
 {
+    use HasRoles;
+
+
+    //step 3
+    //Create Chat
     public function createChat($clientId)
     {
         return Chat::create(['client_id' => $clientId]);
     }
 
-    public function getUserChats($user)
+
+    //Delete Chat
+    public function deleteChat($chatId)
     {
-        if ($user->hasRole('admin')) {
-            return Chat::all();
+        return Chat::findOrFail($chatId)->delete();
+    }
+
+    //step 3
+    //Get User Chats
+    public function getUserChats()
+    {
+        $user = Auth::user();
+
+        if ($user->roles->contains('name', 'admin')) {
+            return Chat::latest()->get();
         }
 
-        if ($user->hasRole('team')) {
+        if ($user->roles->contains('name', 'team')) {
+            return Chat::whereHas('teamMembers', fn($q) => $q->where('user_id', $user->id))
+                ->latest()
+                ->get();
+        }
+
+        if ($user->roles->contains('name', 'client')) {
+            return Chat::where('client_id', $user->id)
+                ->latest()
+                ->get();
+        }
+    }
+
+    //Get User Chat
+    public function getUserChat($chatId)
+    {
+        $user = Auth::user();
+
+        if ($user->roles->contains('name', 'admin')) {
+            return Chat::findOrFail($chatId);
+        }
+
+        if ($user->roles->contains('name', 'team')) {
             return Chat::whereHas('teamMembers', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
-            })->get();
+            })->findOrFail($chatId);
         }
 
-        return Chat::where('client_id', $user->id)->get();
+        if ($user->roles->contains('name', 'client')) {
+            return Chat::where('client_id', $user->id)->findOrFail($chatId);
+        }
     }
 
-    public function sendMessage($chatId, $data)
-    {
-        return ChatMessage::create([
-            'chat_id'   => $chatId,
-            'sender_id' => $data['senderId'],
-            'message'   => $data['message'] ?? null,
-            'file_path' => $data['file_path'] ?? null,
-        ]);
-    }
 
+    //step 4
     public function assignTeamMembers($chatId, array $teamIds)
     {
         $chat = Chat::findOrFail($chatId);
@@ -44,17 +79,14 @@ class ChatRepository implements ChatRepositoryInterface
         return $chat->load('teamMembers');
     }
 
-    public function attachPackage($chatId, $packageId)
-    {
-        $chat = Chat::findOrFail($chatId);
-        $chat->packages()->syncWithoutDetaching([$packageId]);
-        return $chat->load('packages');
-    }
+    //step 6
+    // public function attachPackage($chatId, $packageId)
+    // {
+    //     $chat = Chat::findOrFail($chatId);
+    //     $chat->packages()->syncWithoutDetaching([$packageId]);
+    //     return $chat->load('packages');
+    // }
 
-    public function getChatByPackage($packageId)
-    {
-        return Chat::whereHas('packages', function ($q) use ($packageId) {
-            $q->where('package_id', $packageId);
-        })->first();
-    }
+
+
 }

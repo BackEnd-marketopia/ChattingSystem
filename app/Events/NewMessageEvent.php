@@ -9,8 +9,9 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class NewMessageEvent implements ShouldBroadcast
+class NewMessageEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -24,7 +25,7 @@ class NewMessageEvent implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new PresenceChannel('chat.' . $this->message->chat_id);
+        return new Channel('chat.' . $this->message->chat_id);
     }
 
     public function broadcastWith(): array

@@ -1,39 +1,46 @@
 <?php
 
+namespace App\Repositories\Package;
+
 use App\Models\Package;
-use App\Models\PackageItem;
+use App\Repositories\Package\PackageRepositoryInterface;
 
 class PackageRepository implements PackageRepositoryInterface
 {
-    public function createPackage($clientId, $limits)
+
+    public function getAll()
     {
-        return Package::create([
-            'client_id' => $clientId,
-            'limits' => $limits
-        ]);
+        return Package::all();
     }
 
-    public function addItem($packageId, $data)
+    public function findById($id)
     {
-        return PackageItem::create([
-            'package_id' => $packageId,
-            'type' => $data['type'],
-            'content_type' => $data['content_type'],
-            'content_value' => $data['content_value'],
-        ]);
+        $package = Package::findOrFail($id);
+        return $package;
     }
 
-    public function updateItemStatus($itemId, $status)
+    public function create(array $data)
     {
-        $item = PackageItem::findOrFail($itemId);
-        $item->update(['status' => $status]);
-        return $item;
+        return Package::create($data);
     }
 
-    public function getClientPackageItems($clientId)
+    public function update($id, array $data)
     {
-        return PackageItem::whereHas('package', function ($q) use ($clientId) {
-            $q->where('client_id', $clientId);
-        })->get();
+        $package = Package::findOrFail($id);
+        if ($package) {
+            $package->update($data);
+            return $package;
+        }
+        return null;
+    }
+
+    public function delete($id)
+    {
+        $package = Package::findOrFail($id);
+        if ($package) {
+            $package->delete();
+            return true;
+        }
+        return false;
     }
 }

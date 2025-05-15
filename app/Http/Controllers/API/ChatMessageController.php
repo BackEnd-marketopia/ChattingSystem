@@ -1,29 +1,36 @@
 <?php
 
-// app/Http/Controllers/Api/ChatMessageController.php
 
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreChatMessageRequest;
 use App\Services\ChatService;
+use App\Services\ChatMessageService;
+use Illuminate\Support\Facades\Response;
 
 class ChatMessageController extends Controller
 {
     protected $chatService;
+    protected $chatMessageService;
 
-    public function __construct(ChatService $chatService)
+    public function __construct(ChatService $chatService, ChatMessageService $chatMessageService)
     {
         $this->chatService = $chatService;
+        $this->chatMessageService = $chatMessageService;
     }
 
-    public function store(StoreChatMessageRequest $request, $chatId)
+    //step 8  (index)
+    public function getMessages($chatId)
     {
-        $message = $this->chatService->sendMessage($chatId, $request->validated());
+        $messages = $this->chatMessageService->getMessages($chatId);
+        return Response::api('Messages retrieved successfully', 200, true, 200, $messages);
+    }
 
-        return response()->json([
-            'message' => 'Message sent successfully',
-            'data' => $message,
-        ]);
+    //step 7  (store)
+    public function sendMessage(StoreChatMessageRequest $request, $chatId)
+    {
+        $message = $this->chatMessageService->sendMessage($chatId, $request->validated());
+        return Response::api('Message sent successfully', 201, true, 201, $message);
     }
 }

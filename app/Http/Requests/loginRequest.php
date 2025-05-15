@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Response;
 
 class loginRequest extends FormRequest
 {
@@ -13,14 +14,17 @@ class loginRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->routeIs('login');
     }
 
 
     public function failedValidation(Validator $validator)
     {
+        $errors = $validator->errors()->first();
+
+
         throw new HttpResponseException(
-            response()->json(['errors' => $validator->errors()->first()], 401)
+            Response::api($errors, 401, false, 401, null)
         );
     }
 
@@ -32,8 +36,13 @@ class loginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:6'
         ];
+    }
+
+    public function messages(): array
+    {
+        return [];
     }
 }

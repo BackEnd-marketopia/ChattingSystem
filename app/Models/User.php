@@ -52,10 +52,40 @@ class User extends Authenticatable
     public function assignedChats()
     {
         return $this->belongsToMany(Chat::class, 'chat_teams');
-    } 
+    }
+
 
     public function packages()
     {
-        return $this->hasMany(Package::class, 'client_id');
+        return $this->belongsToMany(Package::class, 'client_package', 'client_id', 'package_id')
+            ->withTimestamps()
+            ->withPivot(['start_date', 'end_date']);
+    }
+
+
+    public function bonuses()
+    {
+        return $this->hasMany(BonusItem::class, 'client_id');
+    }
+
+    /**
+     * Get the user's role
+     * 
+     * @return string|null
+     */
+    public function getRole()
+    {
+        return $this->roles->first()?->name;
+    }
+
+    /**
+     * Assign a role to the user
+     * 
+     * @param string $role
+     * @return void
+     */
+    public function setRole($role)
+    {
+        $this->syncRoles([$role]);
     }
 }

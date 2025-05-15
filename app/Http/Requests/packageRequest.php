@@ -3,15 +3,19 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class packageRequest extends FormRequest
+
+class PackageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->routeIs('packages.store') && $this->user()?->hasanyRole('admin');
     }
 
     /**
@@ -22,8 +26,23 @@ class packageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required|exists:users,id',
-            'limits' => 'required|array'
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
         ];
+    }
+
+    public function messages(): array
+    {
+        return [];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors()->first();
+
+
+        throw new HttpResponseException(
+            Response::api($errors, 401, false, 401, null)
+        );
     }
 }

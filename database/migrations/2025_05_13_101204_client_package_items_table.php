@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class ClientPackageItemsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('client_package_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('client_package_id')->references('id')->on('client_package')->onDelete('cascade');
+            $table->enum('item_type', ['post', 'design', 'video', 'photo', 'reel', 'ugc', 'profile', 'ads', 'document', 'link', 'other']);
+            $table->unsignedInteger('original_item_id')->nullable();
+            $table->text('content')->nullable();
+            $table->string('media_url')->nullable();
+            $table->enum('status', ['pending', 'accepted', 'declined', 'edited'])->default('pending');
+            $table->text('client_note')->nullable();
+            $table->unsignedBigInteger('handled_by')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('client_package_items');
+    }
+}

@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\registerRequest;
 use App\Http\Requests\loginRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
 {
@@ -18,22 +24,42 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    
+
     public function register(registerRequest $request)
     {
-        $token = $this->authService->register($request->validated());
-        return response()->json(['token' => $token], 201);
+        $result = $this->authService->register($request->validated());
+
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 401, false, 401, null)
+            );
+        }
+
+        return Response::api('User registered successfully', 201, true, 201, $request->except('password', 'password_confirmation'));
     }
 
 
     public function login(loginRequest $request)
     {
-        $token = $this->authService->login($request->validated());
+        $result = $this->authService->login($request->validated());
 
-        if (!$token) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 401, false, 401, null)
+            );
         }
 
-        return response()->json(['token' => $token], 200);
+        $user = User::where('email', $request->email)->first(['id', 'name', 'email']);
+
+
+        return Response::api('User logged in successfully', 200, true, 200, [
+            'user' => array_merge(
+                $user->toArray(),
+                [
+                    'role' => $user->getRoleNames()->first(), 
+                ]
+            ),
+            'token' => $result
+        ], 200);
     }
 }

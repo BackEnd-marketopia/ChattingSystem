@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Response;
 
 class registerRequest extends FormRequest
 {
@@ -13,15 +14,19 @@ class registerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->routeIs('register') && $this->user()?->hasRole('admin');
     }
 
     public function failedValidation(Validator $validator)
     {
+        $errors = $validator->errors()->first();
+
         throw new HttpResponseException(
-            response()->json(['errors' => $validator->errors()->first()], 422)
+            Response::api($errors, 401, false, 401, null)
         );
     }
+
+
 
     /**
      * Get the validation rules that apply to the request.
@@ -34,7 +39,17 @@ class registerRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,client,team',
+            'role' => $this->routeIs('register') ? 'required|string|in:admin,client,team' : 'nullable',
         ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [];
     }
 }

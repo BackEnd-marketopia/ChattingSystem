@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Services;
+
 use App\Repositories\Chat\ChatRepositoryInterface;
 use App\Repositories\Package\PackageRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -8,50 +10,89 @@ use App\Events\NewMessageEvent;
 
 class PackageService
 {
-    public function __construct(protected PackageRepositoryInterface $packageRepo, protected ChatRepositoryInterface $chatRepo)
+    protected $repository;
+
+    public function __construct(PackageRepositoryInterface $repository)
     {
-        $this->packageRepo = $packageRepo;
-        $this->chatRepo = $chatRepo;
+        $this->repository = $repository;
     }
 
-    public function createPackage($clientId, $limits)
+    // public function __construct(protected PackageRepositoryInterface $packageRepo, protected ChatRepositoryInterface $chatRepo)
+    // {
+    //     $this->packageRepo = $packageRepo;
+    //     $this->chatRepo = $chatRepo;
+    // }
+
+    // //step 5
+    // public function createPackage($clientId, $limits)
+    // {
+    //     return $this->packageRepo->createPackage($clientId, $limits);
+    // }
+
+    // //step 5
+    // //step 6
+    // public function addItem($packageId, $data)
+    // {
+    //     $item = $this->packageRepo->addItem($packageId, $data);
+
+    //     $chat = $this->chatRepo->getChatByPackage($packageId);
+
+    //     if ($chat) {
+
+    //         $filePath = null;
+
+    //         $data = [
+    //             'sender_id' => Auth::id(),
+    //             'message' => 'A new item has been added to the package: ' . $data['type'],
+    //             'file_path' =>  $filePath,
+    //         ];
+
+    //         // Create a system message in the chat
+    //         $message = $this->chatRepo->sendMessage($chat->id, $data);
+
+    //         // Broadcast the message event (Laravel Reverb/WebSocket)
+    //         broadcast(new NewMessageEvent($message))->toOthers();
+    //     }
+
+    //     return $item;
+    // }
+
+    // //step 5
+    // public function updateItemStatus($itemId, $status)
+    // {
+    //     return $this->packageRepo->updateItemStatus($itemId, $status);
+    // }
+
+    // //step 5
+    // public function getClientItems($clientId)
+    // {
+    //     return $this->packageRepo->getClientPackageItems($clientId);
+    // }
+
+
+
+    public function listPackages()
     {
-        return $this->packageRepo->createPackage($clientId, $limits);
+        return $this->repository->getAll();
     }
 
-    public function addItem($packageId, $data)
+    public function getPackage($id)
     {
-        $item = $this->packageRepo->addItem($packageId, $data);
-
-        $chat = $this->chatRepo->getChatByPackage($packageId);
-
-        if ($chat) {
-
-            $filePath = null;
-
-            $data = [
-                'sender_id' => Auth::id(),
-                'message' => 'A new item has been added to the package: ' . $data['type'],
-                'file_path' =>  $filePath,
-            ];
-
-            // Create a system message in the chat
-            $message = $this->chatRepo->sendMessage($chat->id, $data);
-
-            // Broadcast the message event (Laravel Reverb/WebSocket)
-            broadcast(new NewMessageEvent($message))->toOthers();
-        }
-
-        return $item;
+        return $this->repository->findById($id);
     }
 
-    public function updateItemStatus($itemId, $status)
+    public function createPackage(array $data)
     {
-        return $this->packageRepo->updateItemStatus($itemId, $status);
+        return $this->repository->create($data);
     }
 
-    public function getClientItems($clientId)
+    public function updatePackage($id, array $data)
     {
-        return $this->packageRepo->getClientPackageItems($clientId);
+        return $this->repository->update($id, $data);
+    }
+
+    public function deletePackage($id)
+    {
+        return $this->repository->delete($id);
     }
 }

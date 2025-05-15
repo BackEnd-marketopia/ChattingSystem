@@ -20,17 +20,21 @@ class AuthRepository implements AuthRepositoryInterface
             $user->assignRole($data['role']);
         }
 
-        return $user->createToken('api-token')->plainTextToken;
+        return $user->createToken('api_token')->plainTextToken;
     }
 
     public function login(array $credentials)
     {
         $user = User::where('email', $credentials['email'])->first();
 
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return null;
+        if (!$user) {
+            return ['error' => 'email', 'message' => 'Email not found'];
         }
 
-        return $user->createToken('api-token')->plainTextToken;
+        if (!Hash::check($credentials['password'], $user->password)) {
+            return ['error' => 'password', 'message' => 'Invalid password'];
+        }
+
+        return $user->createToken('api_token')->plainTextToken;
     }
 }

@@ -2,36 +2,46 @@
 
 namespace App\Http\Controllers\API;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\packageitemRequest;
-use App\Http\Requests\packageRequest;
-use PackageService;
+use App\Http\Requests\PackageRequest;
+use App\Http\Requests\packageUpdateRequest;
+use App\Services\PackageService;
+use Illuminate\Support\Facades\Response;
 
 class PackageController extends Controller
 {
-    public function __construct(protected PackageService $service) {}
 
-    public function create(packageRequest $request)
+    protected $service;
+
+    public function __construct(PackageService $service)
     {
-        $data = $request->validated();
-        return response()->json($this->service->createPackage($data['client_id'], $data['limits']));
+        $this->service = $service;
     }
 
-    public function addItem(packageitemRequest $request, $packageId)
+    public function index()
     {
-        $data = $request->validated();
-        return response()->json($this->service->addItem($packageId, $data));
+        return Response::api('Packages fetched successfully', 200, true, 200, $this->service->listPackages());
     }
 
-    public function updateItemStatus(Request $request, $itemId)
+    public function show($id)
     {
-        $status = $request->validate(['status' => 'required|in:accepted,rejected,pending'])['status'];
-        return response()->json($this->service->updateItemStatus($itemId, $status));
+        return Response::api('Package fetched successfully', 200, true, 200, $this->service->getPackage($id));
     }
 
-    public function myItems(Request $request)
+    public function store(PackageRequest $request)
     {
-        return response()->json($this->service->getClientItems($request->user()->id));
+        $validated = $request->validated();
+        return Response::api('Package created successfully', 201, true, 201, $this->service->createPackage($validated));
+    }
+
+    public function update(packageUpdateRequest $request, $id)
+    {
+        $validated = $request->validated();
+        return Response::api('Package updated successfully', 200, true, 200, $this->service->updatePackage($id, $validated));
+    }
+
+    public function destroy($id)
+    {
+        return Response::api('Package deleted successfully', 200, true, 200, ['deleted' => $this->service->deletePackage($id)]);
     }
 }

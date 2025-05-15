@@ -10,11 +10,21 @@ class Chat extends Model
 
     public function teamMembers()
     {
-        return $this->belongsToMany(User::class, 'chat_teams');
+        return $this->belongsToMany(User::class, 'chat_teams')->withTimestamps();
     }
 
     public function packages()
     {
         return $this->belongsToMany(Package::class, 'chat_package')->withTimestamps();
     }
+
+    public function messages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
+    // public function participants()
+    // {
+    //     return $this->belongsToMany(User::class, 'chat_user');
+    // }
 }
