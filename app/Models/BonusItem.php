@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BonusItem extends Model
 {
+    protected $table = "bonus_items";
+
     protected $fillable = [
         'package_id',
         'client_id',

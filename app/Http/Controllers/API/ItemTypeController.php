@@ -4,45 +4,43 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\ItemType\ItemTypeRepositoryInterface;
-use Illuminate\Http\Request;
+use App\Http\Requests\ItemTypeRequest;
+use App\Services\ItemTypeService;
+use Illuminate\Support\Facades\Response;
 
 class ItemTypeController extends Controller
 {
-    protected $itemTypeRepository;
+    protected $itemTypeService;
 
-    public function __construct(ItemTypeRepositoryInterface $itemTypeRepository)
+    public function __construct(ItemTypeService $itemTypeService)
     {
-        $this->itemTypeRepository = $itemTypeRepository;
+        $this->itemTypeService = $itemTypeService;
     }
 
     public function index()
     {
-        return response()->json($this->itemTypeRepository->all());
+        return Response::api('ItemTypes fetched successfully', 200, true, 200, $this->itemTypeService->all());
     }
 
-    public function store(Request $request)
+    public function store(ItemTypeRequest $request)
     {
-        $request->validate(['name' => 'required|string|unique:item_types,name']);
-        $type = $this->itemTypeRepository->create($request->only('name'));
-        return response()->json($type, 201);
+        $validated = $request->validated();
+        return Response::api('ItemType created successfully', 201, true, 201, $this->itemTypeService->create($validated));
     }
 
     public function show($id)
     {
-        return response()->json($this->itemTypeRepository->find($id));
+        return Response::api('ItemType fetched successfully', 200, true, 200, $this->itemTypeService->find($id));
     }
 
-    public function update(Request $request, $id)
+    public function update(ItemTypeRequest $request, $id)
     {
-        $request->validate(['name' => 'required|string|unique:item_types,name,' . $id]);
-        $type = $this->itemTypeRepository->update($id, $request->only('name'));
-        return response()->json($type);
+        $validated = $request->validated();
+        return Response::api('ItemType updated successfully', 200, true, 200, $this->itemTypeService->update($id, $validated));
     }
 
     public function destroy($id)
     {
-        $this->itemTypeRepository->delete($id);
-        return response()->json(['message' => 'ItemType deleted successfully']);
+        return Response::api('ItemType deleted successfully', 200, true, 200, $this->itemTypeService->delete($id));
     }
 }

@@ -4,10 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Response;
 
-class PackageItemRequest extends FormRequest
+class LogUsageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +25,10 @@ class PackageItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'package_id' => 'required|exists:packages,id',
-            'type_id' => 'required|exists:item_types,id',
-            'status' => 'required|in:pending,accepted,edited,declined',
-            'notes' => 'required|string',
-            'created_by' => 'required|exists:users,id',
+            'client_package_id' => 'required|exists:client_package,id',
+            'item_type' => 'required|string|exists:item_types,name',
+            'item_id' => 'required|integer|exists:package_items,type_id',
+            'action' => 'required|in:edit,accept,decline',
         ];
     }
 
@@ -42,9 +41,8 @@ class PackageItemRequest extends FormRequest
     {
         $errors = $validator->errors()->first();
 
-
         throw new HttpResponseException(
-            Response::api($errors, 401, false, 401, null)
+            Response::api($errors, 405, false, 405, null)
         );
     }
 }

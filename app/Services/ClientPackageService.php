@@ -13,13 +13,13 @@ class ClientPackageService
         $this->clientPackageRepo = $clientPackageRepo;
     }
 
-    public function recordUsage($clientPackageId, $itemType, $itemId, $actionType, $userId)
+    public function recordUsage($clientPackageId, $itemType, $itemId, $action, $userId)
     {
         return $this->clientPackageRepo->logItemUsage(
             $clientPackageId,
             $itemType,
             $itemId,
-            $actionType,
+            $action,
             $userId
         );
     }

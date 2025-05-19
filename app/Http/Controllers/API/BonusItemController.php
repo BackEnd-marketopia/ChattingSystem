@@ -33,12 +33,13 @@ class BonusItemController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'client_package_id' => 'required|exists:client_package,id',
-            'item_type'         => 'required|string',
-            'title'             => 'nullable|string',
-            'description'       => 'nullable|string',
-            'is_static'         => 'boolean',
-            'is_dynamic'        => 'boolean',
+            'package_id' => 'required|exists:packages,id',
+            'client_id' => 'required|exists:users,id',
+            'item_type' => 'required|string',
+            'quantity' => 'required|integer|min:1',
+            'is_static' => 'boolean',
+            'is_claimed' => 'boolean',
+            'note' => 'nullable|string',
         ]);
 
         $bonus = $this->bonusItemService->create($data);
@@ -60,10 +61,10 @@ class BonusItemController extends Controller
     {
         $data = $request->validate([
             'item_type'   => 'sometimes|string',
-            'title'       => 'nullable|string',
-            'description' => 'nullable|string',
-            'is_static'   => 'boolean',
-            'is_dynamic'  => 'boolean',
+            'quantity' => 'required|integer|min:1',
+            'is_static' => 'boolean',
+            'is_claimed' => 'boolean',
+            'note' => 'nullable|string',
         ]);
 
         $bonus = $this->bonusItemService->update($id, $data);

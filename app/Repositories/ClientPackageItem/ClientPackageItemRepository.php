@@ -7,20 +7,57 @@ use App\Models\ItemStatusHistory;
 
 class ClientPackageItemRepository implements ClientPackageItemRepositoryInterface
 {
-    public function find($id)
+
+    public function getByClientPackage($clientPackageId)
     {
-        return ClientPackageItem::findOrFail($id);
+        return ClientPackageItem::where('client_package_id', $clientPackageId)->get();
     }
 
-    public function update($id, array $data)
+    public function show($clientPackageId, $id)
     {
-        $item = $this->find($id);
+        return ClientPackageItem::where('client_package_id', $clientPackageId)->findOrFail($id);
+    }
+
+    public function store($clientPackageId, array $data)
+    {
+        $data['client_package_id'] = $clientPackageId;
+        return ClientPackageItem::create($data);
+    }
+
+    public function update($clientPackageId, $id, array $data)
+    {
+        $item = $this->show($clientPackageId, $id);
         $item->update($data);
         return $item;
     }
 
-    public function createHistory(array $data)
+    public function destroy($clientPackageId, $id)
     {
-        return ItemStatusHistory::create($data);
+        $item = $this->show($clientPackageId, $id);
+        return $item->delete();
+    }
+
+    public function accept($id)
+    {
+        $item = ClientPackageItem::findOrFail($id);
+        $item->status = 'accepted';
+        $item->save();
+        return $item;
+    }
+
+    public function decline($id)
+    {
+        $item = ClientPackageItem::findOrFail($id);
+        $item->status = 'declined';
+        $item->save();
+        return $item;
+    }
+
+    public function edit($id)
+    {
+        $item = ClientPackageItem::findOrFail($id);
+        $item->status = 'edited';
+        $item->save();
+        return $item;
     }
 }

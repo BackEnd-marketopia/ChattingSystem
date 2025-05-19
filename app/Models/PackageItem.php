@@ -11,7 +11,7 @@ class PackageItem extends Model
 
     protected $fillable = [
         'package_id',
-        'type',
+        'type_id',
         'status',
         'notes',
         'created_by',
@@ -30,6 +30,11 @@ class PackageItem extends Model
 
     public function allowedItem()
     {
-        return $this->belongsTo(PackageAllowedItem::class, 'type', 'name');
+        return $this->hasOne(PackageAllowedItem::class);
+    }
+
+    public function itemType()
+    {
+        return $this->belongsTo(ItemType::class, 'name');
     }
 }

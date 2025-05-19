@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\BonusItemRepositoryInterface;
+use App\Repositories\BonusItem\BonusItemRepositoryInterface;
 
 class BonusItemService
 {

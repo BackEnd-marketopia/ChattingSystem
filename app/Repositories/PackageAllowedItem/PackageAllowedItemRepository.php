@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\PackageAllowedItem;
 
 use App\Models\PackageAllowedItem;
-use App\Repositories\Interfaces\PackageAllowedItemRepositoryInterface;
+use App\Repositories\PackageAllowedItem\PackageAllowedItemRepositoryInterface;
 
 class PackageAllowedItemRepository implements PackageAllowedItemRepositoryInterface
 {
@@ -33,10 +33,5 @@ class PackageAllowedItemRepository implements PackageAllowedItemRepositoryInterf
     {
         $item = PackageAllowedItem::findOrFail($id);
         return $item->delete();
-    }
-
-    public function getByPackage($packageId)
-    {
-        return PackageAllowedItem::where('package_id', $packageId)->get();
     }
 }

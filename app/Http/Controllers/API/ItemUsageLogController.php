@@ -28,11 +28,12 @@ class ItemUsageLogController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'client_package_id' => 'required|exists:client_packages,id',
+            'client_package_id' => 'required|exists:client_package,id',
+            'item_id' => 'required|integer',
             'item_type' => 'required|string',
-            'item_id' => 'nullable|integer',
-            'action' => 'required|in:edit,decline,accept',
-            'count' => 'required|integer|min:1'
+            'action' => 'required|in:edit,accept,decline',
+            'note' => 'nullable|string',
+            'performed_by' => 'nullable|exists:users,id',
         ]);
         return response()->json($this->service->create($data));
     }
@@ -50,7 +51,10 @@ class ItemUsageLogController extends Controller
 
     public function destroy($id)
     {
-        return response()->json(['deleted' => $this->service->delete($id)]);
+        return response()->json([
+            'deleted' => $this->service->delete($id),
+            'message' => 'Item usage log deleted successfully'
+        ]);
     }
 
     public function byClientPackage($clientPackageId)

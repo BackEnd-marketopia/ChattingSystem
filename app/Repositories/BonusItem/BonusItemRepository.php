@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\BonusItem;
 
 use App\Models\BonusItem;
-use App\Repositories\Interfaces\BonusItemRepositoryInterface;
 
-class BonusItemRepository implements BonusItemRepositoryInterface
+class BonusItemRepository implements BonusItemRepositoryInterfacE
 {
 
 
     public function allByClientPackage($clientPackageId)
     {
-        return BonusItem::where('client_package_id', $clientPackageId)->get();
+        return BonusItem::where('package_id', $clientPackageId)->get();
     }
 
 
@@ -19,8 +18,8 @@ class BonusItemRepository implements BonusItemRepositoryInterface
     {
         $bonus = BonusItem::findOrFail($bonusItemId);
         $bonus->update([
-            'delivered' => true,
-            'delivery_date' => now(),
+            'is_claimed' => true,
+            'updated_at' => now(),
         ]);
         return $bonus;
     }

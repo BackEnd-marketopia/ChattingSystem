@@ -37,6 +37,7 @@ class NewMessageEvent implements ShouldBroadcastNow
             'message' => $this->message->message,
             'file_path' => $this->message->file_path,
             'created_at' => $this->message->created_at->toDateTimeString(),
+            
         ];
     }
 }

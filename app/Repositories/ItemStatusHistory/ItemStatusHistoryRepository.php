@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\ItemStatusHistory;
 
 use App\Models\ItemStatusHistory;
-use App\Repositories\Interfaces\ItemStatusHistoryRepositoryInterface;
 
 class ItemStatusHistoryRepository implements ItemStatusHistoryRepositoryInterface
 {
@@ -31,6 +30,6 @@ class ItemStatusHistoryRepository implements ItemStatusHistoryRepositoryInterfac
 
     public function getByItem(int $itemId): array
     {
-        return ItemStatusHistory::where('client_package_item_id', $itemId)->get()->toArray();
+        return ItemStatusHistory::where('client_package_id', $itemId)->get()->toArray();
     }
 }

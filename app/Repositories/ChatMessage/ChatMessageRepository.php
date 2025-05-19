@@ -15,7 +15,7 @@ class ChatMessageRepository implements ChatMessageRepositoryInterface
         $chat = Chat::findOrFail($chatId);
         $messages = ChatMessage::with('sender')
             ->where('chat_id', $chat->id)
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->paginate(20);
         return $messages;
     }

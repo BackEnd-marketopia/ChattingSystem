@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\ItemStatusHistoryRepositoryInterface;
+use App\Repositories\ItemStatusHistory\ItemStatusHistoryRepositoryInterface;
 
 class ItemStatusHistoryService
 {

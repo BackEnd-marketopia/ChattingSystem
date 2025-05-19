@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClientPackage extends Model
 {
+
+    protected $table = 'client_package';
+
     protected $fillable = [
         'client_id',
         'package_id',
+        'chat_id',
         'status',
-        'chat_id'
     ];
 
 

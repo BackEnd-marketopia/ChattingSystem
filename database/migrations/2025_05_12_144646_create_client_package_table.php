@@ -12,7 +12,7 @@ class CreateClientPackageTable extends Migration
             $table->id();
             $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('package_id')->constrained()->onDelete('cascade');
-            $table->string('chat_id')->nullable();
+            $table->foreignId('chat_id')->constrained()->onDelete('cascade');
 
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

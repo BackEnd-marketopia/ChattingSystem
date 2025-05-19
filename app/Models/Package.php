@@ -19,7 +19,7 @@ class Package extends Model
 
     protected $casts = [];
 
-    public function items()
+    public function packageItems()
     {
         return $this->hasMany(PackageItem::class);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\ItemStatusHistory;
 
 use App\Models\ItemStatusHistory;
 

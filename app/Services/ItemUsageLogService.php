@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\ItemUsageLogRepositoryInterface;
+use App\Repositories\ItemUsageLog\ItemUsageLogRepositoryInterface;
 
 class ItemUsageLogService
 {

@@ -10,13 +10,12 @@ class PackageAllowedItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'package_id',
-        'item_type',
-        'allowed_quantity',
+        'package_item_id',
+        'allowed_count',
     ];
 
-    public function package()
+    public function packageItem()
     {
-        return $this->belongsTo(Package::class);
+        return $this->belongsTo(PackageItem::class);
     }
 }

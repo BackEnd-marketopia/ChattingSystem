@@ -11,13 +11,12 @@ class CreatePackageAllowedItemsTable extends Migration
     {
         Schema::create('package_allowed_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('package_id');
-            $table->string('item_type');
+            $table->unsignedBigInteger('package_item_id');
             $table->unsignedInteger('allowed_count')->default(0);
 
             $table->timestamps();
 
-            $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
+            $table->foreign('package_item_id')->references('id')->on('package_items')->onDelete('cascade');
         });
     }
 

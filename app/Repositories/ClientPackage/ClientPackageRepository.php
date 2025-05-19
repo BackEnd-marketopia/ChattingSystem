@@ -9,13 +9,13 @@ use App\Models\ItemStatusHistory;
 
 class ClientPackageRepository implements ClientPackageInterface
 {
-    public function logItemUsage($clientPackageId, $itemType, $itemId, $actionType, $userId)
+    public function logItemUsage($clientPackageId, $itemType, $itemId, $action, $userId)
     {
         return ItemUsageLog::create([
             'client_package_id' => $clientPackageId,
             'item_type' => $itemType,
             'item_id' => $itemId,
-            'action_type' => $actionType,
+            'action' => $action,
             'performed_by' => $userId,
         ]);
     }

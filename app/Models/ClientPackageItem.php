@@ -12,7 +12,7 @@ class ClientPackageItem extends Model
     protected $fillable = [
         'client_package_id',
         'item_type',
-        'original_item_id',
+        'package_item_id',
         'content',
         'media_url',
         'status',
@@ -20,12 +20,19 @@ class ClientPackageItem extends Model
         'handled_by',
     ];
 
+
+
+    public function packageItem()
+    {
+        return $this->belongsTo(PackageItem::class);
+    }
+
     public function clientPackage()
     {
         return $this->belongsTo(ClientPackage::class);
     }
 
-    public function user()
+    public function handler()
     {
         return $this->belongsTo(User::class, 'handled_by');
     }

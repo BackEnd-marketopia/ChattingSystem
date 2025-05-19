@@ -2,10 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\Chat\ChatRepositoryInterface;
 use App\Repositories\Package\PackageRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use App\Events\NewMessageEvent;
+
 
 
 class PackageService

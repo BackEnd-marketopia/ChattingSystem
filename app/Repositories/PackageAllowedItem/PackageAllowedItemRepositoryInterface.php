@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\PackageAllowedItem;
 
 use App\Models\PackageAllowedItem;
 
@@ -11,5 +11,4 @@ interface PackageAllowedItemRepositoryInterface
     public function create(array $data): PackageAllowedItem;
     public function update($id, array $data): PackageAllowedItem;
     public function delete($id): bool;
-    public function getByPackage($packageId);
 }

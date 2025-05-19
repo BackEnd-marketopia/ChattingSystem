@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\PackageAllowedItemService;
-
+use App\Http\Requests\PackageAllowedItemRequest;
+use Illuminate\Support\Facades\Response;
 
 class PackageAllowedItemController extends Controller
 {
@@ -18,40 +19,28 @@ class PackageAllowedItemController extends Controller
 
     public function index()
     {
-        return response()->json($this->service->all());
+        return Response::api("Package allowed items fetched successfully", 200, true, 200, $this->service->all());
     }
 
     public function show($id)
     {
-        return response()->json($this->service->find($id));
+        return Response::api("Package allowed item fetched successfully", 200, true, 200, $this->service->find($id));
     }
 
-    public function store(Request $request)
+    public function store(PackageAllowedItemRequest $request)
     {
-        $data = $request->validate([
-            'package_id' => 'required|exists:packages,id',
-            'item_type' => 'required|string',
-            'allowed_quantity' => 'required|integer',
-        ]);
-        return response()->json($this->service->create($data));
+        $data = $request->validated();
+        return Response::api("Package allowed item created successfully", 200, true, 200, $this->service->create($data));
     }
 
-    public function update(Request $request, $id)
+    public function update(PackageAllowedItemRequest $request, $id)
     {
-        $data = $request->validate([
-            'item_type' => 'sometimes|string',
-            'allowed_quantity' => 'sometimes|integer',
-        ]);
-        return response()->json($this->service->update($id, $data));
+        $data = $request->validated();
+        return Response::api("Package allowed item updated successfully", 200, true, 200, $this->service->update($id, $data));
     }
 
     public function destroy($id)
     {
-        return response()->json(['deleted' => $this->service->delete($id)]);
-    }
-
-    public function byPackage($packageId)
-    {
-        return response()->json($this->service->getByPackage($packageId));
+        return Response::api("Package allowed item deleted successfully", 200, true, 200, $this->service->delete($id));
     }
 }

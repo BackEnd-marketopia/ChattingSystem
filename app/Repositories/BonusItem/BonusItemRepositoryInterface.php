@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\BonusItem;
 
 use App\Models\BonusItem;
 

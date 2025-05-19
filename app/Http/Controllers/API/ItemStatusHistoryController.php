@@ -18,9 +18,12 @@ class ItemStatusHistoryController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'client_package_item_id' => 'required|exists:client_package_items,id',
-            'status' => 'required|in:accepted,declined,edited',
-            'comment' => 'nullable|string'
+            'client_package_id' => 'required|exists:client_package,id',
+            'item_id' => 'required|integer',
+            'item_type' => 'required|string',
+            'status' => 'required|in:pending,accepted,edited,declined',
+            'note' => 'nullable|string',
+            'updated_by' => 'nullable|exists:users,id',
         ]);
 
         return response()->json([
@@ -41,8 +44,9 @@ class ItemStatusHistoryController extends Controller
     public function update(Request $request, int $id)
     {
         $data = $request->validate([
-            'status' => 'required|in:accepted,declined,edited',
-            'comment' => 'nullable|string'
+            'status' => 'required|in:pending,accepted,edited,declined',
+            'note' => 'nullable|string',
+            'updated_by' => 'nullable|exists:users,id',
         ]);
 
         return response()->json([
