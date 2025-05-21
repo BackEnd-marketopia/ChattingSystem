@@ -22,7 +22,7 @@ class registerRequest extends FormRequest
         $errors = $validator->errors()->first();
 
         throw new HttpResponseException(
-            Response::api($errors, 401, false, 401, null)
+            Response::api($errors, 409, false, 409, null)
         );
     }
 

@@ -4,15 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Services\AuthService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\registerRequest;
 use App\Http\Requests\loginRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\Role;
+use App\Http\Requests\UpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
 class AuthController extends Controller
@@ -56,10 +53,70 @@ class AuthController extends Controller
             'user' => array_merge(
                 $user->toArray(),
                 [
-                    'role' => $user->getRoleNames()->first(), 
+                    'role' => $user->getRoleNames()->first(),
                 ]
             ),
             'token' => $result
         ], 200);
+    }
+
+    public function logout()
+    {
+        $result = $this->authService->logout();
+
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 401, false, 401, null)
+            );
+        }
+
+        return Response::api('User logged out successfully', 200, true, 200, null);
+    }
+
+    public function users()
+    {
+        $result = $this->authService->users();
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 401, false, 401, null)
+            );
+        }
+        return Response::api('Users retrieved successfully', 200, true, 200, $result);
+    }
+
+    public function show($userId)
+    {
+        $result = $this->authService->show($userId);
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 401, false, 401, null)
+            );
+        }
+        return Response::api('User retrieved successfully', 200, true, 200, $result);
+    }
+
+    public function update($userId,UpdateRequest $request)
+    {
+        $result = $this->authService->update($userId, $request->all());
+
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 200, true, 0, 200, null)
+            );
+        }
+
+        return Response::api('User Updated successfully', 200, true, 200, $result);
+    }
+
+    public function destroy($userId)
+    {
+        $result = $this->authService->delete($userId);
+
+        if (is_array($result)) {
+            throw new HttpResponseException(
+                Response::api($result['message'], 200, true, 0, 200, null)
+            );
+        }
+        return Response::api('User Deleted successfully', 200, true, 200, $result);
     }
 }

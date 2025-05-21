@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BonusItemRequest;
+use App\Http\Requests\UpdateBonusItemRequest;
 use App\Services\BonusItemService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class BonusItemController extends Controller
 {
@@ -17,70 +20,33 @@ class BonusItemController extends Controller
 
     public function index($clientPackageId)
     {
-        return response()->json([
-            'data' => $this->bonusItemService->getByClientPackage($clientPackageId),
-        ]);
+        return Response::api('Bonus items retrieved successfully', 200, true, 200, $this->bonusItemService->getByClientPackage($clientPackageId));
     }
 
     public function deliver($id)
     {
-        return response()->json([
-            'data' => $this->bonusItemService->deliver($id),
-            'message' => 'Bonus item marked as delivered.',
-        ]);
+        return Response::api('Bonus item marked as delivered successfully', 200, true, 200, $this->bonusItemService->deliver($id));
     }
 
-    public function store(Request $request)
+    public function store(BonusItemRequest $request)
     {
-        $data = $request->validate([
-            'package_id' => 'required|exists:packages,id',
-            'client_id' => 'required|exists:users,id',
-            'item_type' => 'required|string',
-            'quantity' => 'required|integer|min:1',
-            'is_static' => 'boolean',
-            'is_claimed' => 'boolean',
-            'note' => 'nullable|string',
-        ]);
-
-        $bonus = $this->bonusItemService->create($data);
-
-        return response()->json([
-            'data' => $bonus,
-            'message' => 'Bonus item created successfully.',
-        ]);
+        $data = $request->validated();
+        return Response::api('Bonus item created successfully', 200, true, 200, $this->bonusItemService->create($data));
     }
 
     public function show($id)
     {
-        return response()->json([
-            'data' => $this->bonusItemService->find($id),
-        ]);
+        return Response::api('Bonus item retrieved successfully', 200, true, 200, $this->bonusItemService->find($id));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateBonusItemRequest $request, $id)
     {
-        $data = $request->validate([
-            'item_type'   => 'sometimes|string',
-            'quantity' => 'required|integer|min:1',
-            'is_static' => 'boolean',
-            'is_claimed' => 'boolean',
-            'note' => 'nullable|string',
-        ]);
-
-        $bonus = $this->bonusItemService->update($id, $data);
-
-        return response()->json([
-            'data' => $bonus,
-            'message' => 'Bonus item updated successfully.',
-        ]);
+        $data = $request->validated();
+        return Response::api('Bonus item updated successfully', 200, true, 200, $this->bonusItemService->update($id, $data));
     }
 
     public function destroy($id)
     {
-        $this->bonusItemService->delete($id);
-
-        return response()->json([
-            'message' => 'Bonus item deleted successfully.',
-        ]);
+        return Response::api('Bonus item deleted successfully', 200, true, 200, $this->bonusItemService->delete($id));
     }
 }

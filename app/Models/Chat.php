@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Chat extends Model
 {
-    protected $fillable = ['client_id'];
+    protected $fillable = [
+        'name',
+        'description',
+        'client_id'
+    ];
 
     public function teamMembers()
     {

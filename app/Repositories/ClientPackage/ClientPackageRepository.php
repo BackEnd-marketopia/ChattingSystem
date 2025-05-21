@@ -9,34 +9,34 @@ use App\Models\ItemStatusHistory;
 
 class ClientPackageRepository implements ClientPackageInterface
 {
-    public function logItemUsage($clientPackageId, $itemType, $itemId, $action, $userId)
-    {
-        return ItemUsageLog::create([
-            'client_package_id' => $clientPackageId,
-            'item_type' => $itemType,
-            'item_id' => $itemId,
-            'action' => $action,
-            'performed_by' => $userId,
-        ]);
-    }
+    // public function logItemUsage($clientPackageId, $itemType, $itemId, $action, $userId)
+    // {
+    //     return ItemUsageLog::create([
+    //         'client_package_id' => $clientPackageId,
+    //         'item_type' => $itemType,
+    //         'item_id' => $itemId,
+    //         'action' => $action,
+    //         'performed_by' => $userId,
+    //     ]);
+    // }
 
-    public function changeItemStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null)
-    {
-        return ItemStatusHistory::create([
-            'client_package_id' => $clientPackageId,
-            'item_type' => $itemType,
-            'item_id' => $itemId,
-            'status' => $status,
-            'note' => $note,
-            'updated_by' => $userId,
-        ]);
-    }
+    // public function changeItemStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null)
+    // {
+    //     return ItemStatusHistory::create([
+    //         'client_package_id' => $clientPackageId,
+    //         'item_type' => $itemType,
+    //         'item_id' => $itemId,
+    //         'status' => $status,
+    //         'note' => $note,
+    //         'updated_by' => $userId,
+    //     ]);
+    // }
 
 
     public function all()
     {
         return ClientPackage::all();
-    }
+    }   
 
     public function find($id)
     {

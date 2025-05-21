@@ -7,25 +7,15 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Response;
 
-class loginRequest extends FormRequest
+
+class UpdateClientLimitRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return $this->routeIs('login');
-    }
-
-
-    public function failedValidation(Validator $validator)
-    {
-        $errors = $validator->errors()->first();
-
-
-        throw new HttpResponseException(
-            Response::api($errors, 409, false, 409, null)
-        );
+        return true;
     }
 
     /**
@@ -36,13 +26,24 @@ class loginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:6'
+            'item_type' => 'required|string',
+            'edit_limit' => 'required|integer|min:0',
+            'decline_limit' => 'required|integer|min:0',
         ];
     }
 
-    public function messages(): array
+    public function messages()
     {
         return [];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors()->first();
+
+
+        throw new HttpResponseException(
+            Response::api($errors, 409, false, 409, null)
+        );
     }
 }

@@ -25,8 +25,15 @@ Route::middleware([
 });
 
 
-
 Route::middleware('auth:sanctum')->group(function () {
+
+    //User
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/users', [AuthController::class, 'users'])->name('users')->middleware('role:admin');
+    Route::get('/user/{id}', [AuthController::class, 'show'])->name('user.show')->middleware('role:admin');
+    Route::put('/user/{id}', [AuthController::class, 'update'])->name('user.update');
+    Route::delete('/user/{id}', [AuthController::class, 'destroy'])->name('user.destroy')->middleware('role:admin');
+
 
     //Chats
     Route::post('/chats', [ChatController::class, 'createChat'])->name('chat')->middleware('role:admin');
@@ -93,8 +100,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Client Package
     Route::prefix('client-package')->group(function () {
-        Route::post('/log-usage', [ClientPackageController::class, 'logUsage'])->name('client-package.log-usage')->middleware('role:admin');
-        Route::post('/change-status', [ClientPackageController::class, 'changeStatus'])->name('client-package.change-status')->middleware('role:admin');
+        // Route::post('/log-usage', [ClientPackageController::class, 'logUsage'])->name('client-package.log-usage')->middleware('role:admin');
+        // Route::post('/change-status', [ClientPackageController::class, 'changeStatus'])->name('client-package.change-status')->middleware('role:admin');
         Route::get('/', [ClientPackageController::class, 'index'])->name('client-package.index')->middleware('role:admin');
         Route::get('/{clientPackageId}', [ClientPackageController::class, 'show'])->name('client-package.show')->middleware('role:admin');
         Route::post('/', [ClientPackageController::class, 'store'])->name('client-package.store')->middleware('role:admin');
@@ -104,27 +111,27 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Client Package Items
     Route::prefix('client-package-items')->group(function () {
-        Route::get('/{clientPackageId}', [ClientPackageItemController::class, 'index']);
-        Route::get('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'show']);
-        Route::post('/store/{clientPackageId}', [ClientPackageItemController::class, 'store']);
-        Route::patch('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'update']);
-        Route::delete('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'destroy']);
-        Route::put('{id}/accept', [ClientPackageItemController::class, 'accept']);
-        Route::put('{id}/edit', [ClientPackageItemController::class, 'edit']);
-        Route::put('{id}/decline', [ClientPackageItemController::class, 'decline']);
+        Route::get('/{clientPackageId}', [ClientPackageItemController::class, 'index'])->name('client-package-items.index')->middleware('role:admin');
+        Route::get('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'show'])->name('client-package-items.show')->middleware('role:admin');
+        Route::post('/store/{clientPackageId}', [ClientPackageItemController::class, 'store'])->name('client-package-items.store')->middleware('role:admin|team');
+        Route::patch('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'update'])->name('client-package-items.update')->middleware('role:admin|team');
+        Route::delete('/{clientPackageId}/{id}', [ClientPackageItemController::class, 'destroy'])->name('client-package-items.destroy')->middleware('role:admin');
+        Route::put('{id}/accept', [ClientPackageItemController::class, 'accept'])->name('client-package-items.accept')->middleware('role:client');
+        Route::put('{id}/edit', [ClientPackageItemController::class, 'edit'])->name('client-package-items.edit')->middleware('role:client');
+        Route::put('{id}/decline', [ClientPackageItemController::class, 'decline'])->name('client-package-items.decline')->middleware('role:client');
     });
 
 
     //Client Limits
     Route::prefix('client-limits')->group(function () {
-        Route::get('/', [ClientLimitController::class, 'index']);
-        Route::post('/store', [ClientLimitController::class, 'store']);
-        Route::put('edit/{id}', [ClientLimitController::class, 'update']);
-        Route::delete('/{id}', [ClientLimitController::class, 'destroy']);
+        Route::get('/', [ClientLimitController::class, 'index'])->name('client-limits.index')->middleware('role:admin|team');
+        Route::post('/store', [ClientLimitController::class, 'store'])->name('client-limits.store')->middleware('role:admin');
+        Route::put('edit/{id}', [ClientLimitController::class, 'update'])->name('client-limits.update')->middleware('role:admin');
+        Route::delete('/{id}', [ClientLimitController::class, 'destroy'])->name('client-limits.destroy')->middleware('role:admin');
 
-        Route::get('/{clientPackageId}', [ClientLimitController::class, 'remainingLimits']);
-        Route::post('/{clientPackageId}/decrement-edit', [ClientLimitController::class, 'decrementEdit']);
-        Route::post('/{clientPackageId}/decrement-decline', [ClientLimitController::class, 'decrementDecline']);
+        Route::get('/{clientPackageId}', [ClientLimitController::class, 'remainingLimits'])->name('client-limits.remainingLimits')->middleware('role:admin|team|client');
+        Route::post('/{clientPackageId}/decrement-edit', [ClientLimitController::class, 'decrementEdit'])->name('client-limits.decrementEdit')->middleware('role:admin|client');
+        Route::post('/{clientPackageId}/decrement-decline', [ClientLimitController::class, 'decrementDecline'])->name('client-limits.decrementDecline')->middleware('role:admin|client');
     });
 
 
@@ -132,31 +139,31 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Bonus Items
     Route::prefix('package-bonus-items')->group(function () {
-        Route::get('bonus-items/{clientPackageId}', [BonusItemController::class, 'index']);
-        Route::post('bonus-items', [BonusItemController::class, 'store']);
-        Route::get('bonus-item/{id}', [BonusItemController::class, 'show']);
-        Route::put('bonus-item/edit/{id}', [BonusItemController::class, 'update']);
-        Route::delete('bonus-item/{id}', [BonusItemController::class, 'destroy']);
-        Route::post('bonus-items/{id}/deliver', [BonusItemController::class, 'deliver']);
+        Route::get('bonus-items/{clientPackageId}', [BonusItemController::class, 'index'])->name('package-bonus-items.index')->middleware('role:admin|team');
+        Route::post('bonus-items', [BonusItemController::class, 'store'])->name('package-bonus-items.store')->middleware('role:admin');
+        Route::get('bonus-item/{id}', [BonusItemController::class, 'show'])->name('package-bonus-items.show')->middleware('role:admin|team');
+        Route::put('bonus-item/edit/{id}', [BonusItemController::class, 'update'])->name('package-bonus-items.update')->middleware('role:admin');
+        Route::delete('bonus-item/{id}', [BonusItemController::class, 'destroy'])->name('package-bonus-items.destroy')->middleware('role:admin');
+        Route::post('bonus-items/{id}/deliver', [BonusItemController::class, 'deliver'])->name('package-bonus-items.deliver')->middleware('role:admin|team');
     });
 
 
     //Item Usage Logs
     Route::prefix('item-usage-logs')->group(function () {
-        Route::get('/', [ItemUsageLogController::class, 'index']);
-        Route::get('/{id}', [ItemUsageLogController::class, 'show']);
-        Route::post('/create', [ItemUsageLogController::class, 'store']);
-        Route::put('/{id}', [ItemUsageLogController::class, 'update']);
-        Route::delete('/{id}', [ItemUsageLogController::class, 'destroy']);
-        Route::get('/by-client-package/{clientPackageId}', [ItemUsageLogController::class, 'byClientPackage']);
+        Route::get('/', [ItemUsageLogController::class, 'index'])->name('item-usage-logs.index')->middleware('role:admin|team');
+        Route::get('/{id}', [ItemUsageLogController::class, 'show'])->name('item-usage-logs.show')->middleware('role:admin|team');
+        Route::post('/create', [ItemUsageLogController::class, 'store'])->name('item-usage-logs.store')->middleware('role:admin');
+        Route::put('/{id}', [ItemUsageLogController::class, 'update'])->name('item-usage-logs.update')->middleware('role:admin');
+        Route::delete('/{id}', [ItemUsageLogController::class, 'destroy'])->name('item-usage-logs.destroy')->middleware('role:admin');
+        Route::get('/by-client-package/{clientPackageId}', [ItemUsageLogController::class, 'byClientPackage'])->name('item-usage-logs.byClientPackage')->middleware('role:admin|team');
     });
 
     //Item Status Histories
     Route::prefix('item-status-histories')->group(function () {
-        Route::post('/', [ItemStatusHistoryController::class, 'store']);
-        Route::get('/{id}', [ItemStatusHistoryController::class, 'show']);
-        Route::put('edit/{id}', [ItemStatusHistoryController::class, 'update']);
-        Route::delete('/{id}', [ItemStatusHistoryController::class, 'destroy']);
-        Route::get('/item/{itemId}', [ItemStatusHistoryController::class, 'indexByItem']);
+        Route::post('/', [ItemStatusHistoryController::class, 'store'])->name('item-status-histories.store')->middleware('role:admin');
+        Route::get('/{id}', [ItemStatusHistoryController::class, 'show'])->name('item-status-histories.show')->middleware('role:admin|team');
+        Route::put('edit/{id}', [ItemStatusHistoryController::class, 'update'])->name('item-status-histories.update')->middleware('role:admin');
+        Route::delete('/{id}', [ItemStatusHistoryController::class, 'destroy'])->name('item-status-histories.destroy')->middleware('role:admin');
+        Route::get('/item/{itemId}', [ItemStatusHistoryController::class, 'indexByItem'])->name('item-status-histories.indexByItem')->middleware('role:admin|team');
     });
 });

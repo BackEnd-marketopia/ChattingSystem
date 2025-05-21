@@ -3,6 +3,7 @@
 namespace App\Repositories\Auth;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthRepository implements AuthRepositoryInterface
@@ -36,5 +37,53 @@ class AuthRepository implements AuthRepositoryInterface
         }
 
         return $user->createToken('api_token')->plainTextToken;
+    }
+
+    public function logout()
+    {
+        if (Auth::check()) {
+            Auth::user()->currentAccessToken()->delete();
+        }
+        return true;
+    }
+
+    public function users()
+    {
+        $users = User::paginate(10);
+        $users->through(function ($user) {
+            $user->role = $user->getRoleNames()->first();
+            unset($user->roles);
+            return $user;
+        });
+        return $users;
+    }
+
+    public function show($userId)
+    {
+        $user = User::findorFail($userId);
+        $user->role = $user->getRoleNames()->first();
+        unset($user->roles);
+        return $user;
+    }
+
+    public function update($userId, $data)
+    {
+        $user = User::findorFail($userId);
+        $user->update(
+            [
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password']),
+            ]
+        );
+
+        return $user;
+    }
+
+    public function delete($userId)
+    {
+        $user = User::findorFail($userId);
+        $user->delete();
+        return $user;
     }
 }

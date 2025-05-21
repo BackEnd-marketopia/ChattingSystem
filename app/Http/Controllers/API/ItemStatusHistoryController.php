@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ItemStatusHistoryRequest;
+use App\Http\Requests\UpdateItemStatusHistoryRequest;
 use Illuminate\Http\Request;
 use App\Services\ItemStatusHistoryService;
+use Illuminate\Support\Facades\Response;
 
 class ItemStatusHistoryController extends Controller
 {
@@ -15,60 +18,32 @@ class ItemStatusHistoryController extends Controller
         $this->service = $service;
     }
 
-    public function store(Request $request)
+    public function store(ItemStatusHistoryRequest $request)
     {
-        $data = $request->validate([
-            'client_package_id' => 'required|exists:client_package,id',
-            'item_id' => 'required|integer',
-            'item_type' => 'required|string',
-            'status' => 'required|in:pending,accepted,edited,declined',
-            'note' => 'nullable|string',
-            'updated_by' => 'nullable|exists:users,id',
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'data' => $this->service->create($data)
-        ]);
+        $data = $request->validated();
+        return Response::api('Item Status History Created Successfully', 200, true, 200, $this->service->create($data));
     }
 
     public function show(int $id)
     {
-        return response()->json([
-            'status' => true,
-            'data' => $this->service->find($id)
-        ]);
+        return Response::api('Item Status History Fetched Successfully', 200, true, 200, $this->service->find($id));
     }
 
 
-    public function update(Request $request, int $id)
+    public function update(UpdateItemStatusHistoryRequest $request, int $id)
     {
-        $data = $request->validate([
-            'status' => 'required|in:pending,accepted,edited,declined',
-            'note' => 'nullable|string',
-            'updated_by' => 'nullable|exists:users,id',
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'data' => $this->service->update($id, $data)
-        ]);
+        $data = $request->validated();
+        return Response::api('Item Status History Updated Successfully', 200, true, 200, $this->service->update($id, $data));
     }
 
     public function destroy(int $id)
     {
-        return response()->json([
-            'status' => true,
-            'data' => $this->service->delete($id)
-        ]);
+        return Response::api('Item Status History Deleted Successfully', 200, true, 200, $this->service->delete($id));
     }
 
 
     public function indexByItem($itemId)
     {
-        return response()->json([
-            'status' => true,
-            'data' => $this->service->getByItem($itemId)
-        ]);
+        return Response::api('Item Status History Fetched Successfully', 200, true, 200, $this->service->getByItem($itemId));
     }
 }

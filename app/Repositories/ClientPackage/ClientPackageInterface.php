@@ -4,8 +4,8 @@ namespace App\Repositories\ClientPackage;
 
 interface ClientPackageInterface
 {
-    public function logItemUsage($clientPackageId, $itemType, $itemId, $action, $userId);
-    public function changeItemStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null);
+    // public function logItemUsage($clientPackageId, $itemType, $itemId, $action, $userId);
+    // public function changeItemStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null);
 
     public function all();
     public function find($id);

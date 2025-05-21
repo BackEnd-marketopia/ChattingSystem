@@ -19,9 +19,9 @@ class ChatService
 
     //step 3
     //Create Chat
-    public function createChat($clientId)
+    public function createChat($data)
     {
-        return $this->chatRepo->createChat($clientId);
+        return $this->chatRepo->createChat($data);
     }
 
 

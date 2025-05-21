@@ -19,7 +19,7 @@ interface ClientPackageItemRepositoryInterface
     public function store($clientPackageId, array $data);
     public function update($clientPackageId, $id, array $data);
     public function destroy($clientPackageId, $id);
-    public function accept($id);
-    public function decline($id);
-    public function edit($id);
+    // public function accept($id);
+    // public function decline($id);
+    // public function edit($id);
 }

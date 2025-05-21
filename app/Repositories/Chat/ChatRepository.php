@@ -12,12 +12,10 @@ class ChatRepository implements ChatRepositoryInterface
 {
     use HasRoles;
 
-
-    //step 3
     //Create Chat
-    public function createChat($clientId)
+    public function createChat($data)
     {
-        return Chat::create(['client_id' => $clientId]);
+        return Chat::create($data);
     }
 
 
@@ -27,7 +25,6 @@ class ChatRepository implements ChatRepositoryInterface
         return Chat::findOrFail($chatId)->delete();
     }
 
-    //step 3
     //Get User Chats
     public function getUserChats()
     {
@@ -70,23 +67,13 @@ class ChatRepository implements ChatRepositoryInterface
         }
     }
 
-
-    //step 4
+    // Assign Team Members
     public function assignTeamMembers($chatId, array $teamIds)
     {
         $chat = Chat::findOrFail($chatId);
         $chat->teamMembers()->sync($teamIds);
         return $chat->load('teamMembers');
     }
-
-    //step 6
-    // public function attachPackage($chatId, $packageId)
-    // {
-    //     $chat = Chat::findOrFail($chatId);
-    //     $chat->packages()->syncWithoutDetaching([$packageId]);
-    //     return $chat->load('packages');
-    // }
-
 
 
 }

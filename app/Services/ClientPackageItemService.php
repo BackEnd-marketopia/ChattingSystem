@@ -10,11 +10,12 @@ use App\Models\ClientLimit;
 use App\Models\PackageAllowedItem;
 use App\Models\ItemStatusHistory;
 use App\Models\ItemUsageLog;
+use App\Models\PackageItem;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Repositories\ClientLimit\ClientLimitRepositoryInterface;
-
+use Illuminate\Http\Request;
 
 class ClientPackageItemService
 {
@@ -28,88 +29,6 @@ class ClientPackageItemService
         $this->clientPackageItemRepo = $clientPackageItemRepo;
         $this->clientLimitRepo = $clientLimitRepo;
     }
-
-    // public function getItemsByClientPackage($clientPackageId)
-    // {
-    //     return $this->clientPackageItemRepo->getItemsByClientPackage($clientPackageId);
-    // }
-
-    // public function getItemByClientPackage($clientPackageId, $itemId)
-    // {
-    //     return $this->clientPackageItemRepo->getItemByClientPackage($clientPackageId, $itemId);
-    // }
-
-    // public function createItem($clientPackageId, array $data)
-    // {
-    //     return $this->clientPackageItemRepo->create($clientPackageId, $data);
-    // }
-
-    // public function updateItem($clientPackageId, $itemId, array $data)
-    // {
-    //     return $this->clientPackageItemRepo->update($clientPackageId, $itemId, $data);
-    // }
-
-    // public function deleteItem($clientPackageId, $itemId)
-    // {
-    //     return $this->clientPackageItemRepo->delete($clientPackageId, $itemId);
-    // }
-
-
-    // public function editItemStatus($itemId, array $data)
-    // {
-    //     $item = $this->clientPackageItemRepo->findItem($itemId);
-    //     $item = $this->clientPackageItemRepo->updateItem($itemId, $data);
-
-    //     $this->clientPackageItemRepo->createHistory([
-    //         'client_package_item_id' => $item->id,
-    //         'status' => $item->status,
-    //         'note' => $data['note'] ?? '',
-    //         'updated_by' => Auth::id(),
-    //     ]);
-
-    //     event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
-
-    //     return $item;
-    // }
-
-    // public function declineItemStatus($itemId, array $data = [])
-    // {
-    //     $item = $this->clientPackageItemRepo->findItem($itemId);
-    //     $item = $this->clientPackageItemRepo->updateItem($item->client_package_id, $itemId, [
-    //         'status' => 'declined',
-    //         ...$data,
-    //     ]);
-
-    //     $this->clientPackageItemRepo->createHistory([
-    //         'client_package_item_id' => $item->id,
-    //         'status' => 'declined',
-    //         'note' => $data['note'] ?? '',
-    //         'updated_by' => Auth::id(),
-    //     ]);
-
-    //     event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
-
-    //     return $item;
-    // }
-
-    // public function acceptItemStatus($itemId)
-    // {
-    //     $item = $this->clientPackageItemRepo->findItem($itemId);
-    //     $item = $this->clientPackageItemRepo->updateItem($itemId, ['status' => 'accepted']);
-
-    //     $this->clientPackageItemRepo->createHistory([
-    //         'client_package_item_id' => $item->id,
-    //         'status' => 'accepted',
-    //         'note' => 'Accepted by admin',
-    //         'updated_by' => Auth::id(),
-    //     ]);
-
-    //     event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
-
-    //     return $item;
-    // }
-
-
 
     public function getAll($clientPackageId)
     {
@@ -149,86 +68,143 @@ class ClientPackageItemService
         return $this->clientPackageItemRepo->destroy($clientPackageId, $id);
     }
 
-    // public function accept($id)
-    // {
-    //     return $this->clientPackageItemRepo->accept($id);
-    // }
-
-    // public function decline($id)
-    // {
-    //     return $this->clientPackageItemRepo->decline($id);
-    // }
-
-    // public function edit($id)
-    // {
-    //     return $this->clientPackageItemRepo->edit($id);
-    // }
 
     public function accept(int $id, array $data)
     {
         $item = ClientPackageItem::findOrFail($id);
-
         $allowed = PackageAllowedItem::where('package_item_id', $item->package_item_id)->first();
 
-        $acceptedCount = ClientPackageItem::where('client_package_id', $item->client_package_id)
-            ->where('item_type', $item->item_type)
-            ->where('status', 'accepted')->count();
-
-        if ($acceptedCount >= $allowed->max_count) {
-            throw ValidationException::withMessages(['limit' => 'Max accepted items reached for this package.']);
+        $acceptedCount = ItemStatusHistory::where('client_package_id', $item->id)
+            ->where('item_id', $item->packageItem->type_id)
+            ->where('status', 'accepted')
+            ->count();
+        // dd($acceptedCount);
+        // dd($allowed->allowed_count);
+        if ($acceptedCount >= $allowed->allowed_count) {
+            // dd('das');
+            return [
+                'message' => 'Maximum accepted items reached for this package Item.',
+                'item' => null
+            ];
         }
 
         $item->status = 'accepted';
         $item->save();
 
+        $data['item_id'] = $item->packageItem->type_id;
+
         $this->HistoryStatusChange($item, 'accepted', $data);
         $this->logUsage($item, 'accept');
-        event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
 
-        return $item;
+        $chatMessage = new \App\Models\ChatMessage([
+            'chat_id' => $item->clientPackage->chat_id,
+            'sender_id' => Auth::id(),
+            'message' => "Item of type {$item->item_type} has been accepted.",
+            'file_path' => $item->media_url,
+        ]);
+        $chatMessage->save();
+        event(new \App\Events\NewMessageEvent($chatMessage));
+
+        return [
+            'message' => 'Item accepted successfully.',
+            'item' => $item
+        ];
     }
 
     public function edit(int $id, array $data)
     {
         $item = ClientPackageItem::findOrFail($id);
 
-        $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->item_type);
+        // dd($item);
+        // $editCount = ItemStatusHistory::where('client_package_id', $item->id)
+        //     ->where('item_id', $item->packageItem->type_id)
+        //     ->where('status', 'edited')
+        //     ->count();
+
+        // dd($editCount);
+        // $editCount = ItemStatusHistory::where('client_package_item_id', $item->id)
+        //     ->where('status', 'edited')
+        //     ->count();
+        // dd($item->packageItem?->itemType->name);
+        $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->packageItem->itemType->name);
         if (!$limit || $limit->edit_limit <= 0) {
-            throw ValidationException::withMessages(['edit' => 'Edit limit reached.']);
+            return [
+                'message' => 'Edit limit reached.',
+                'item' => null
+            ];
         }
 
         $item->status = 'edited';
         $item->save();
 
-        $this->clientLimitRepo->decrementEdit($item->client_package_id, $item->item_type);
+        $data['item_id'] = $item->packageItem->type_id;
+
+
+        $this->clientLimitRepo->decrementEdit($item->client_package_id, $item->packageItem->itemType->name);
         $this->HistoryStatusChange($item, 'edited', $data);
         $this->logUsage($item, 'edit');
-        event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
 
-        return $item;
+        $chatMessage = new \App\Models\ChatMessage([
+            'chat_id' => $item->clientPackage->chat_id,
+            'sender_id' => Auth::id(),
+            'message' => "Item of type {$item->item_type} has been edited.",
+            'file_path' => $item->media_url,
+        ]);
+        $chatMessage->save();
+        event(new \App\Events\NewMessageEvent($chatMessage));
+
+        return [
+            'message' => 'Item edited successfully.',
+            'item' => $item
+        ];
     }
 
     public function decline(int $id, array $data)
     {
         $item = ClientPackageItem::findOrFail($id);
 
-        $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->item_type);
+        // $declineCount = ItemStatusHistory::where('client_package_item_id', $item->id)
+        //     ->where('status', 'declined')
+        //     ->count();
+
+        // $declineCount = ItemStatusHistory::where('client_package_id', $item->id)
+        //     ->where('item_id', $item->packageItem->type_id)
+        //     ->where('status', 'declined')
+        //     ->count();
+
+        $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->packageItem->itemType->name);
         if (!$limit || $limit->decline_limit <= 0) {
-            throw ValidationException::withMessages(['decline' => 'Decline limit reached.']);
+            return [
+                'message' => 'Decline limit reached.',
+                'item' => null
+            ];
         }
 
         $item->status = 'declined';
         $item->save();
 
-        $this->clientLimitRepo->decrementDecline($item->client_package_id, $item->item_type);
+        $data['item_id'] = $item->packageItem->type_id;
+
+        $this->clientLimitRepo->decrementDecline($item->client_package_id, $item->packageItem->itemType->name);
         $this->HistoryStatusChange($item, 'declined', $data);
         $this->logUsage($item, 'decline');
-        event(new ItemStatusUpdatedEvent($item->history()->latest()->first()));
 
-        return $item;
+        $chatMessage = new \App\Models\ChatMessage([
+            'chat_id' => $item->client_package_id,
+            'sender_id' => Auth::id(),
+            'message' => "Item of type {$item->item_type} has been declined.",
+            'file_path' => $item->media_url,
+        ]);
+        $chatMessage->save();
+        event(new \App\Events\NewMessageEvent($chatMessage));
+
+        return [
+            'message' => 'Item declined successfully.',
+            'item' => $item
+        ];
     }
 
-    protected function HistoryStatusChange(ClientPackageItem $item, string $status, array $data)
+    protected function HistoryStatusChange($item, string $status, array $data)
     {
         $mediaPath = null;
 
@@ -237,18 +213,21 @@ class ClientPackageItemService
         }
 
         ItemStatusHistory::create([
-            'client_package_item_id' => $item->id,
+            'client_package_id' => $item->client_package_id,
             'status' => $status,
+            'item_id' => $data['item_id'],
             'note' => $data['note'] ?? null,
-            'media_path' => $mediaPath,
+            'updated_by' => Auth::id(),
         ]);
     }
 
-    protected function logUsage(ClientPackageItem $item, string $actionType)
+    protected function logUsage($item, string $actionType)
     {
         ItemUsageLog::create([
-            'client_package_item_id' => $item->id,
-            'client_id' => $item->client_id,
+            'item_id' => $item->packageItem->type_id,
+            'item_type' => $item->item_type,
+            'client_package_id' => $item->client_package_id,
+            'client_id' => Auth::id(),
             'action_type' => $actionType,
         ]);
     }

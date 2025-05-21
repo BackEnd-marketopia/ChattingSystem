@@ -17,6 +17,10 @@ class ChatMessageRepository implements ChatMessageRepositoryInterface
             ->where('chat_id', $chat->id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+
+
+        $messages = $messages->toArray();
+        $messages['data'] = array_reverse($messages['data']);
         return $messages;
     }
 

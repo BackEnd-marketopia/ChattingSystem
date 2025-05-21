@@ -13,28 +13,28 @@ class ClientPackageService
         $this->clientPackageRepo = $clientPackageRepo;
     }
 
-    public function recordUsage($clientPackageId, $itemType, $itemId, $action, $userId)
-    {
-        return $this->clientPackageRepo->logItemUsage(
-            $clientPackageId,
-            $itemType,
-            $itemId,
-            $action,
-            $userId
-        );
-    }
+    // public function recordUsage($clientPackageId, $itemType, $itemId, $action, $userId)
+    // {
+    //     return $this->clientPackageRepo->logItemUsage(
+    //         $clientPackageId,
+    //         $itemType,
+    //         $itemId,
+    //         $action,
+    //         $userId
+    //     );
+    // }
 
-    public function updateStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null)
-    {
-        return $this->clientPackageRepo->changeItemStatus(
-            $clientPackageId,
-            $itemType,
-            $itemId,
-            $status,
-            $note,
-            $userId
-        );
-    }
+    // public function updateStatus($clientPackageId, $itemType, $itemId, $status, $note = null, $userId = null)
+    // {
+    //     return $this->clientPackageRepo->changeItemStatus(
+    //         $clientPackageId,
+    //         $itemType,
+    //         $itemId,
+    //         $status,
+    //         $note,
+    //         $userId
+    //     );
+    // }
 
     public function getAll()
     {

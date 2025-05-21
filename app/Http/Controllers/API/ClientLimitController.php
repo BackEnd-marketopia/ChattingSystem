@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientLimitRequest;
+use App\Http\Requests\UpdateClientLimitRequest;
 use App\Services\ClientLimitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class ClientLimitController extends Controller
 {
@@ -41,39 +44,21 @@ class ClientLimitController extends Controller
         return response()->json($limits);
     }
 
-    public function store(Request $request)
+    public function store(ClientLimitRequest $request)
     {
-        $data = $request->validate([
-            'client_id' => 'required|exists:users,id',
-            'client_package_id' => 'required|exists:client_package,id',
-            'item_type' => 'required|string',
-            'edit_limit' => 'required|integer|min:0',
-            'decline_limit' => 'required|integer|min:0',
-        ]);
-
-        $limit = $this->clientLimitService->create($data);
-        return response()->json([
-            'message' => 'Client limit created successfully',
-            'data' => $limit
-        ], 201);
+        $data = $request->validated();
+        return Response::api('Client limit created successfully', 201, true, 201, $this->clientLimitService->create($data));
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateClientLimitRequest $request, $id)
     {
-        $data = $request->validate([
-            'item_type' => 'required|string',
-            'edit_limit' => 'nullable|integer|min:0',
-            'decline_limit' => 'nullable|integer|min:0',
-        ]);
-
-        $limit = $this->clientLimitService->update($id, $data);
-        return response()->json($limit);
+        $data = $request->validated();
+        return Response::api('Client limit updated successfully', 200, true, 200, $this->clientLimitService->update($id, $data));
     }
 
     public function destroy($id)
     {
-        $this->clientLimitService->delete($id);
-        return response()->json(['message' => 'Client limit deleted successfully']);
+        return Response::api('Client limit deleted successfully', 200, true, 200, $this->clientLimitService->delete($id));
     }
 
     public function remainingLimits($clientPackageId, Request $request)

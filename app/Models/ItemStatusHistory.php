@@ -10,9 +10,8 @@ class ItemStatusHistory extends Model
 {
     protected $fillable = [
         'client_package_id',
-        'item_id',
-        'item_type',
         'status',
+        'item_id',
         'note',
         'updated_by',
     ];

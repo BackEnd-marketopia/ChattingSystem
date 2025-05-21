@@ -25,7 +25,18 @@ class ChatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required|exists:users,id',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'client_id' => [
+                'required',
+                'exists:users,id',
+                function ($attribute, $value, $fail) {
+                    $user = \App\Models\User::find($value);
+                    if (!$user || !$user->hasRole('client')) {
+                        $fail('The selected user must have a client role.');
+                    }
+                },
+            ],
         ];
     }
 

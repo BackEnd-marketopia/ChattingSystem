@@ -15,11 +15,7 @@ class PackageRepository implements PackageRepositoryInterface
 
     public function findById($id)
     {
-        $package = Package::findOrFail($id);
-        $package->load(['packageItems']);
-        $package->packageItems->each(function ($item) {
-            $item->load(['allowedItem']);
-        });
+        $package = Package::with(['packageItems.itemType', 'packageItems.allowedItem'])->findOrFail($id);
         return $package;
     }
 

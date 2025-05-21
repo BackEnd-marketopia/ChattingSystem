@@ -24,7 +24,7 @@ class ChatController extends Controller
     //Create Chat
     public function createChat(ChatRequest $request)
     {
-        $chat = $this->chatService->createChat($request->client_id);
+        $chat = $this->chatService->createChat($request->all());
         return Response::api('Chat created successfully', 201, true, 201, $chat);
     }
 

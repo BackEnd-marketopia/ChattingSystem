@@ -35,6 +35,6 @@ class PackageItem extends Model
 
     public function itemType()
     {
-        return $this->belongsTo(ItemType::class, 'name');
+        return $this->belongsTo(ItemType::class, 'type_id');
     }
 }

@@ -37,27 +37,27 @@ class ClientPackageItemRepository implements ClientPackageItemRepositoryInterfac
         return $item->delete();
     }
 
-    public function accept($id)
-    {
-        $item = ClientPackageItem::findOrFail($id);
-        $item->status = 'accepted';
-        $item->save();
-        return $item;
-    }
+    // public function accept($id)
+    // {
+    //     $item = ClientPackageItem::findOrFail($id);
+    //     $item->status = 'accepted';
+    //     $item->save();
+    //     return $item;
+    // }
 
-    public function decline($id)
-    {
-        $item = ClientPackageItem::findOrFail($id);
-        $item->status = 'declined';
-        $item->save();
-        return $item;
-    }
+    // public function decline($id)
+    // {
+    //     $item = ClientPackageItem::findOrFail($id);
+    //     $item->status = 'declined';
+    //     $item->save();
+    //     return $item;
+    // }
 
-    public function edit($id)
-    {
-        $item = ClientPackageItem::findOrFail($id);
-        $item->status = 'edited';
-        $item->save();
-        return $item;
-    }
+    // public function edit($id)
+    // {
+    //     $item = ClientPackageItem::findOrFail($id);
+    //     $item->status = 'edited';
+    //     $item->save();
+    //     return $item;
+    // }
 }

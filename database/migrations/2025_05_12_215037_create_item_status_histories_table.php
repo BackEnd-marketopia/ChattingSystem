@@ -11,7 +11,7 @@ class CreateItemStatusHistoriesTable extends Migration
         Schema::create('item_status_histories', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('client_package_id');
-            $table->morphs('item'); // item_id + item_type
+            $table->foreignId('item_id')->references('id')->on('item_types')->onDelete('cascade');
             $table->enum('status', ['pending', 'accepted', 'edited', 'declined']);
             $table->text('note')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();

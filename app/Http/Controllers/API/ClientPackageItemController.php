@@ -17,61 +17,6 @@ class ClientPackageItemController extends Controller
         $this->service = $service;
     }
 
-    // public function index($clientPackageId)
-    // {
-    //     $items = $this->service->getItemsByClientPackage($clientPackageId);
-    //     return Response::api('Client package items retrieved successfully', 200, true, 200, $items);
-    // }
-
-
-    // public function show($clientPackageId, $id)
-    // {
-    //     $item = $this->service->getItemByClientPackage($clientPackageId, $id);
-    //     return Response::api('Client package item retrieved successfully', 200, true, 200, $item);
-    // }
-
-    // public function store($clientPackageId, Request $request)
-    // {
-    //     dd($request);
-    //     $data = $request->only(['type_id', 'status', 'notes']);
-    //     $item = $this->service->createItem($clientPackageId, $data);
-    //     return Response::api('Client package item created successfully', 200, true, 200, $item);
-    // }
-
-    // public function update($clientPackageId, $id, Request $request)
-    // {
-    //     $data = $request->only(['type_id', 'status', 'notes']);
-    //     $item = $this->service->updateItem($clientPackageId, $id, $data);
-    //     return Response::api('Client package item updated successfully', 200, true, 200, $item);
-    // }
-
-    // public function destroy($clientPackageId, $id)
-    // {
-    //     $this->service->deleteItem($clientPackageId, $id);
-    //     return Response::api('Item deleted successfully', 200, true, 200, null);
-    // }
-
-
-    // public function edit(Request $request, $id)
-    // {
-    //     $data = $request->only(['note']);
-    //     $item = $this->service->editItemStatus($id, $data);
-    //     return Response::api('Item edited successfully', 200, true, 200, $item);
-    // }
-
-    // public function accept($id)
-    // {
-    //     $item = $this->service->acceptItemStatus($id);
-    //     return Response::api('Item accepted successfully', 200, true, 200, $item);
-    // }
-
-    // public function decline(Request $request, $id)
-    // {
-    //     $data = $request->only(['note']);
-    //     $item = $this->service->declineItemStatus($id, $data);
-    //     return Response::api('Item declined successfully', 200, true, 200, $item);
-    // }
-
 
     public function index($clientPackageId)
     {
@@ -97,7 +42,7 @@ class ClientPackageItemController extends Controller
     {
         return $this->service->destroy($clientPackageId, $id);
     }
-
+ 
     public function accept(Request $request, $id)
     {
         return $this->service->accept($id, $request->all());

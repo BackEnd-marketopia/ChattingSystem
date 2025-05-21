@@ -5,7 +5,7 @@ namespace App\Repositories\Chat;
 interface ChatRepositoryInterface
 {
     //step 3
-    public function createChat($clientId);
+    public function createChat($data);
 
     public function deleteChat($chatId);
 
