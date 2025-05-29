@@ -6,8 +6,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+
 class AuthRepository implements AuthRepositoryInterface
 {
+
+    // Register a new user
     public function register(array $data)
     {
         $user = User::create([
@@ -24,6 +27,7 @@ class AuthRepository implements AuthRepositoryInterface
         return $user->createToken('api_token')->plainTextToken;
     }
 
+    // Login a user with given credentials
     public function login(array $credentials)
     {
         $user = User::where('email', $credentials['email'])->first();
@@ -39,6 +43,7 @@ class AuthRepository implements AuthRepositoryInterface
         return $user->createToken('api_token')->plainTextToken;
     }
 
+    // Logout the currently authenticated user
     public function logout()
     {
         if (Auth::check()) {
@@ -47,6 +52,7 @@ class AuthRepository implements AuthRepositoryInterface
         return true;
     }
 
+    // Get the currently authenticated user
     public function users()
     {
         $users = User::paginate(10);
@@ -58,6 +64,7 @@ class AuthRepository implements AuthRepositoryInterface
         return $users;
     }
 
+    // Get user by ID
     public function show($userId)
     {
         $user = User::findorFail($userId);
@@ -66,6 +73,7 @@ class AuthRepository implements AuthRepositoryInterface
         return $user;
     }
 
+    // Update user information
     public function update($userId, $data)
     {
         $user = User::findorFail($userId);
@@ -80,6 +88,7 @@ class AuthRepository implements AuthRepositoryInterface
         return $user;
     }
 
+    // Delete a user by ID
     public function delete($userId)
     {
         $user = User::findorFail($userId);

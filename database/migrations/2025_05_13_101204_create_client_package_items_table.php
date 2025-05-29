@@ -12,8 +12,7 @@ class CreateClientPackageItemsTable extends Migration
             $table->id();
             $table->foreignId('client_package_id')->references('id')->on('client_package')->onDelete('cascade');
 
-            $table->enum('item_type', ['post', 'design', 'video', 'photo', 'reel', 'ugc', 'profile', 'ads', 'document', 'link', 'other']);
-
+            $table->string('item_type');
             $table->unsignedBigInteger('package_item_id')->nullable();
             $table->foreign('package_item_id')->references('id')->on('package_items')->onDelete('set null');
 

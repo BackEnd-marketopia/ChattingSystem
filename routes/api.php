@@ -15,7 +15,6 @@ use App\Http\Controllers\Api\ItemUsageLogController;
 use App\Http\Controllers\Api\ClientPackageItemController;
 use App\Http\Controllers\API\ItemTypeController;
 
-//step 1
 Route::middleware([
     \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
     'throttle:60,1',
@@ -40,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/chats/{chatId}', [ChatController::class, 'deleteChat'])->name('deletechat')->middleware('role:admin');
     Route::get('/chats', [ChatController::class, 'getUserChats'])->name('getchats');
     Route::get('/chats/{chatId}', [ChatController::class, 'getUserChat'])->name('getchat');
+    Route::get('/chat/user/{chatId}', [ChatController::class, 'getUserbyChat'])->name('getuserbychat')->middleware('role:admin');
 
 
     //Messages
@@ -51,9 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/chats/{chatId}/assign-team', [ChatController::class, 'assignTeam'])->name('assignteam')->middleware('role:admin');
 
 
-    //Package - Chat
-    Route::post('/chats/{chatId}/attach-package', [ChatController::class, 'attachPackage'])->name('attachpackage')->middleware('role:admin');
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     // Package Routes
@@ -96,18 +94,21 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     //Client Package
     Route::prefix('client-package')->group(function () {
         // Route::post('/log-usage', [ClientPackageController::class, 'logUsage'])->name('client-package.log-usage')->middleware('role:admin');
         // Route::post('/change-status', [ClientPackageController::class, 'changeStatus'])->name('client-package.change-status')->middleware('role:admin');
-        Route::get('/', [ClientPackageController::class, 'index'])->name('client-package.index')->middleware('role:admin');
+        Route::get('/', [ClientPackageController::class, 'index'])->name('client-package.index')->middleware('role:admin|team|client');
+        Route::get('showbychat/{chatId}', [ClientPackageController::class, 'showbychat'])->name('client-package.showbychat')->middleware('role:admin');
         Route::get('/{clientPackageId}', [ClientPackageController::class, 'show'])->name('client-package.show')->middleware('role:admin');
         Route::post('/', [ClientPackageController::class, 'store'])->name('client-package.store')->middleware('role:admin');
         Route::patch('/{clientPackageId}', [ClientPackageController::class, 'update'])->name('client-package.update')->middleware('role:admin');
         Route::delete('/{clientPackageId}', [ClientPackageController::class, 'destroy'])->name('client-package.destroy')->middleware('role:admin');
     });
+
 
     //Client Package Items
     Route::prefix('client-package-items')->group(function () {
@@ -135,7 +136,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    /////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     //Bonus Items
     Route::prefix('package-bonus-items')->group(function () {

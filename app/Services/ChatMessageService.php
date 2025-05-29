@@ -14,31 +14,33 @@ class ChatMessageService
 {
     protected $chatMessageRepo;
 
+    // Constructor
     public function __construct(ChatMessageRepositoryInterface $chatMessageRepo)
     {
         $this->chatMessageRepo = $chatMessageRepo;
     }
 
-    //step 8
+    // Get messages of a chat
     public function getMessages($chatId)
     {
         return $this->chatMessageRepo->getMessagesByChat($chatId);
     }
 
-    //step 7
+    // Send a message to a chat
     public function sendMessage($chatId, $data)
     {
-        $filePath = null;
-
-        if (isset($data['file'])) {
-            $filePath = $data['file']->store("chats/{$chatId}", 'public');
-        }
-
         $messageData = [
             'chat_id' => $chatId,
-            'sender_id' => Auth::id(),
+            'sender_id' => $data['senderId'] ?? Auth::id(),
             'message' => $data['message'] ?? null,
-            'file_path' => $filePath,
+            'media' => $data['media'] ?? null,
+            'client_package_item_id' => $data['client_package_item_id'] ?? null,
+
+            'item_type' => $data['item_type'] ?? null,
+            'package_item_id' => $data['package_item_id'] ?? null,
+            'client_package_id' => $data['client_package_id'] ?? null,
+            'client_note' => $data['client_note'] ?? null,
+            'IsItem' => $data['IsItem'] ?? null
         ];
 
         $message = $this->chatMessageRepo->sendMessage($messageData);

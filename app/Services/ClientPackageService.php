@@ -41,6 +41,10 @@ class ClientPackageService
         return $this->clientPackageRepo->all();
     }
 
+    public function getByChat($id){
+        return $this->clientPackageRepo->getByChat($id);
+    }
+
     public function getById($id)
     {
         return $this->clientPackageRepo->find($id);

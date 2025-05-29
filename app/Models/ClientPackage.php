@@ -16,11 +16,16 @@ class ClientPackage extends Model
         'status',
     ];
 
+    public function chat()
+    {
+        return $this->belongsTo(Chat::class);
+    }
 
     public function client()
     {
         return $this->belongsTo(User::class, 'client_id');
     }
+
 
     public function package()
     {
@@ -40,5 +45,15 @@ class ClientPackage extends Model
     public function statusHistories()
     {
         return $this->hasMany(ItemStatusHistory::class);
+    }
+
+    public function clientPackageItems()
+    {
+        return $this->hasMany(ClientPackageItem::class);
+    }
+
+    public function clientLimits()
+    {
+        return $this->hasMany(ClientLimit::class);
     }
 }

@@ -81,7 +81,15 @@ class PackageService
 
     public function createPackage(array $data)
     {
-        return $this->repository->create($data);
+        $package = $this->repository->create($data);
+        
+        if (isset($data['file'])) {
+            $filePath = $data['file']->store("packages/{$package->id}", 'public');
+            $package->file_path = '/storage/' . $filePath;
+            $package->save();
+        }
+        
+        return $package;
     }
 
     public function updatePackage($id, array $data)

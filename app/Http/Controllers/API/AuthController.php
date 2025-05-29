@@ -16,12 +16,15 @@ class AuthController extends Controller
 {
     protected $authService;
 
+
+    // Constructor
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
     }
 
 
+    // Register a new user
     public function register(registerRequest $request)
     {
         $result = $this->authService->register($request->validated());
@@ -36,6 +39,7 @@ class AuthController extends Controller
     }
 
 
+    // Login a user
     public function login(loginRequest $request)
     {
         $result = $this->authService->login($request->validated());
@@ -60,6 +64,7 @@ class AuthController extends Controller
         ], 200);
     }
 
+    // Logout the currently authenticated user
     public function logout()
     {
         $result = $this->authService->logout();
@@ -73,6 +78,7 @@ class AuthController extends Controller
         return Response::api('User logged out successfully', 200, true, 200, null);
     }
 
+    // Logout the currently authenticated user
     public function users()
     {
         $result = $this->authService->users();
@@ -84,6 +90,7 @@ class AuthController extends Controller
         return Response::api('Users retrieved successfully', 200, true, 200, $result);
     }
 
+    // Get user by ID
     public function show($userId)
     {
         $result = $this->authService->show($userId);
@@ -95,6 +102,7 @@ class AuthController extends Controller
         return Response::api('User retrieved successfully', 200, true, 200, $result);
     }
 
+    // Update user information
     public function update($userId,UpdateRequest $request)
     {
         $result = $this->authService->update($userId, $request->all());
@@ -108,6 +116,7 @@ class AuthController extends Controller
         return Response::api('User Updated successfully', 200, true, 200, $result);
     }
 
+    // Delete a user by ID
     public function destroy($userId)
     {
         $result = $this->authService->delete($userId);

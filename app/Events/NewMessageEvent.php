@@ -31,13 +31,23 @@ class NewMessageEvent implements ShouldBroadcastNow
     public function broadcastWith(): array
     {
         return [
-            'id' => $this->message->id,
-            'chat_id' => $this->message->chat_id,
-            'sender_id' => $this->message->sender_id,
-            'message' => $this->message->message,
-            'file_path' => $this->message->file_path,
-            'created_at' => $this->message->created_at->toDateTimeString(),
-            
+            'status' => true,
+            'errorNum' => 200,
+            'message' => 'Message sent successfully',
+            'data' => [
+                'id' => $this->message->id,
+                'chat_id' => $this->message->chat_id,
+                'sender_id' => $this->message->sender_id,
+                'message' => $this->message->message,
+                'media_files' => $this->message->mediaFiles->map(function($media) {
+                    return [
+                        'id' => $media->id,
+                        'file_path' => $media->file_path,
+                        'file_type' => $media->file_type
+                    ];
+                }),
+                'created_at' => $this->message->created_at->toDateTimeString()
+            ]
         ];
     }
 }

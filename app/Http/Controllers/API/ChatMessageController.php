@@ -14,20 +14,21 @@ class ChatMessageController extends Controller
     protected $chatService;
     protected $chatMessageService;
 
+    // Constructor
     public function __construct(ChatService $chatService, ChatMessageService $chatMessageService)
     {
         $this->chatService = $chatService;
         $this->chatMessageService = $chatMessageService;
     }
 
-    //step 8  (index)
+    // get messages of a chat
     public function getMessages($chatId)
     {
         $messages = $this->chatMessageService->getMessages($chatId);
         return Response::api('Messages retrieved successfully', 200, true, 200, $messages);
     }
 
-    //step 7  (store)
+    // send a message to a chat
     public function sendMessage(StoreChatMessageRequest $request, $chatId)
     {
         $message = $this->chatMessageService->sendMessage($chatId, $request->validated());

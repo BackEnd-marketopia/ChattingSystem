@@ -46,4 +46,9 @@ class ClientPackageItem extends Model
     {
         return $this->hasMany(ItemStatusHistory::class);
     }
+
+    public function mediaFiles()
+    {
+        return $this->morphMany(MediaFile::class, 'related');
+    }
 }

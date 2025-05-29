@@ -20,7 +20,6 @@ class ChatController extends Controller
         $this->chatService = $chatService;
     }
 
-    //step 3
     //Create Chat
     public function createChat(ChatRequest $request)
     {
@@ -35,7 +34,6 @@ class ChatController extends Controller
         return Response::api('Chat deleted successfully', 200, true, 200, $chat);
     }
 
-    //step 3
     //Get User Chats
     public function getUserChats()
     {
@@ -54,8 +52,6 @@ class ChatController extends Controller
         }
     }
 
-
-    //step 4
     //Assign Team
     public function assignTeam(AssignTeamRequest $request, $chatId)
     {
@@ -63,12 +59,10 @@ class ChatController extends Controller
         return Response::api('Team members assigned successfully', 200, true, 200, $chat);
     }
 
-    //step 6
-    //Attach Package
-    // public function attachPackage(AttachPackageRequest $request)
-    // {
-    //     $chat = $this->chatService->attachPackage($request->chat_id, $request->package_id);
-    //     return Response::api('Package attached successfully', 200, true, 200, $chat);
-    // }
+    public function getUserbyChat($chatId){
+        $user = $this->chatService->getUserbyChat($chatId);
+        return Response::api('User retrieved successfully', 200, true, 200, $user);
+    }
+
 
 }

@@ -42,12 +42,12 @@ class ClientPackageItemService
 
     public function store($clientPackageId, array $data)
     {
-        if (isset($data['media'])) {
-            $mediaPath = $data['media']->store('client_package_items_media', 'public');
-            $data['media_url'] = '/storage/' . $mediaPath;
-        }
+        // if (isset($data['media'])) {
+        //     $mediaPath = $data['media']->store('client_package_items_media', 'public');
+        //     $data['media_url'] = '/storage/' . $mediaPath;
+        // }
 
-        unset($data['media']);
+        // unset($data['media']);
 
         return $this->clientPackageItemRepo->store($clientPackageId, $data);
     }
@@ -71,17 +71,23 @@ class ClientPackageItemService
 
     public function accept(int $id, array $data)
     {
-        $item = ClientPackageItem::findOrFail($id);
+        $item = ClientPackageItem::with('packageItem')->findOrFail($id);
+
+        if (!$item->packageItem) {
+            return [
+                'message' => 'Related package item not found.',
+                'item' => null
+            ];
+        }
+
         $allowed = PackageAllowedItem::where('package_item_id', $item->package_item_id)->first();
 
         $acceptedCount = ItemStatusHistory::where('client_package_id', $item->id)
             ->where('item_id', $item->packageItem->type_id)
             ->where('status', 'accepted')
             ->count();
-        // dd($acceptedCount);
-        // dd($allowed->allowed_count);
+
         if ($acceptedCount >= $allowed->allowed_count) {
-            // dd('das');
             return [
                 'message' => 'Maximum accepted items reached for this package Item.',
                 'item' => null

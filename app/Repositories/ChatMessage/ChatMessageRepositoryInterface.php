@@ -6,10 +6,10 @@ namespace App\Repositories\ChatMessage;
 
 interface ChatMessageRepositoryInterface
 {
-    //step 8
+    // Get messages of a chat
     public function getMessagesByChat($chatId);
 
-    //step 7  (create)
+    // Send a message to a chat
     public function sendMessage(array $data);
     
 }

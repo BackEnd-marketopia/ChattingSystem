@@ -4,24 +4,22 @@ namespace App\Repositories\Chat;
 
 interface ChatRepositoryInterface
 {
-    //step 3
+    //create chat
     public function createChat($data);
 
+    //delete chat
     public function deleteChat($chatId);
 
-    //step 3
+    //get user chats
     public function getUserChats();
 
+    //get user chat
     public function getUserChat($chatId);
 
-    //step 3
-    // public function sendMessage($chatId, $data);
-
-    //step 4
+    //assign team members to chat
     public function assignTeamMembers($chatId, array $teamIds);
 
-    //step 6
-    // public function attachPackage($chatId, $packageId);
-
+    //get user by chat
+    public function getUserbyChat($chatId);
 
 }

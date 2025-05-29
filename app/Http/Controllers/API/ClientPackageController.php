@@ -19,42 +19,16 @@ class ClientPackageController extends Controller
         $this->clientPackageService = $clientPackageService;
     }
 
-    // public function logUsage(LogUsageRequest $request)
-    // {
-    //     $validated = $request->validated();
-
-    //     $log = $this->clientPackageService->recordUsage(
-    //         $validated['client_package_id'],
-    //         $validated['item_type'],
-    //         $validated['item_id'],
-    //         $validated['action'],
-    //         Auth::id()
-    //     );
-
-    //     return Response::api('Usage logged successfully', 200, true, 200, $log);
-    // }
-
-    // public function changeStatus(ChangeStatusRequest $request)
-    // {
-    //     $validated = $request->validated();
-
-    //     $history = $this->clientPackageService->updateStatus(
-    //         $validated['client_package_id'],
-    //         $validated['item_type'],
-    //         $validated['item_id'],
-    //         $validated['status'],
-    //         $validated['note'],
-    //         Auth::id()
-    //     );
-
-    //     return Response::api('Status updated successfully', 200, true, 200, $history);
-    // }
-
-
     public function index()
     {
         return Response::api('Client packages retrieved successfully', 200, true, 200, $this->clientPackageService->getAll());
     }
+
+    public function showbychat($id)
+    {
+        return Response::api('Client packages retrieved successfully', 200, true, 200, $this->clientPackageService->getByChat($id));
+    }
+
 
     public function show($id)
     {

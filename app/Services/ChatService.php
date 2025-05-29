@@ -17,15 +17,11 @@ class ChatService
     }
 
 
-    //step 3
     //Create Chat
     public function createChat($data)
     {
         return $this->chatRepo->createChat($data);
     }
-
-
-
 
 
     //Delete Chat
@@ -35,7 +31,6 @@ class ChatService
     }
 
 
-    //step 3
     //Get User Chats
     public function getUserChats()
     {
@@ -54,15 +49,6 @@ class ChatService
     }
 
 
-    //step 3
-    //Send Message
-    // public function sendMessage($chatId, $data)
-    // {
-    //     return $this->chatRepo->sendMessage($chatId, $data);
-    // }
-
-
-    //step 4
     //Assign Team Members
     public function assignTeamMembers($chatId, array $teamIds)
     {
@@ -70,12 +56,9 @@ class ChatService
     }
 
 
-    //step 6
-    //Attach Package
-    // public function attachPackage($chatId, $packageId)
-    // {
-    //     return $this->chatRepo->attachPackage($chatId, $packageId);
-    // }
+    public function getUserbyChat($chatId){
+        return $this->chatRepo->getUserbyChat($chatId);
+    }
 
 
 }
