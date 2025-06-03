@@ -103,10 +103,9 @@ class AuthController extends Controller
     }
 
     // Update user information
-    public function update($userId,UpdateRequest $request)
+    public function update($userId, UpdateRequest $request)
     {
         $result = $this->authService->update($userId, $request->all());
-
         if (is_array($result)) {
             throw new HttpResponseException(
                 Response::api($result['message'], 200, true, 0, 200, null)

@@ -4,15 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\BonusItemController;
 use App\Http\Controllers\API\ChatController;
-use App\Http\Controllers\Api\ChatMessageController;
+use App\Http\Controllers\API\ChatMessageController;
 use App\Http\Controllers\API\ClientLimitController;
 use App\Http\Controllers\API\PackageController;
-use App\Http\Controllers\Api\ClientPackageController;
+use App\Http\Controllers\API\ClientPackageController;
 use App\Http\Controllers\API\ItemStatusHistoryController;
-use App\Http\Controllers\Api\PackageAllowedItemController;
-use App\Http\Controllers\Api\PackageItemController;
-use App\Http\Controllers\Api\ItemUsageLogController;
-use App\Http\Controllers\Api\ClientPackageItemController;
+use App\Http\Controllers\API\PackageAllowedItemController;
+use App\Http\Controllers\API\PackageItemController;
+use App\Http\Controllers\API\ItemUsageLogController;
+use App\Http\Controllers\API\ClientPackageItemController;
 use App\Http\Controllers\API\ItemTypeController;
 
 Route::middleware([
