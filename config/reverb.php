@@ -52,8 +52,11 @@ return [
             ],
             'pulse_ingest_interval' => env('REVERB_PULSE_INGEST_INTERVAL', 15),
             'telescope_ingest_interval' => env('REVERB_TELESCOPE_INGEST_INTERVAL', 15),
+            'ssl' => [
+                'local_cert' => '/etc/letsencrypt/live/backend-chatting.marketopiateam.com/fullchain.pem',
+                'local_pk' => '/etc/letsencrypt/live/backend-chatting.marketopiateam.com/privkey.pem',
+                'passphrase' => null,
         ],
-
     ],
 
     /*
