@@ -56,6 +56,7 @@ return [
                 'local_cert' => '/etc/letsencrypt/live/backend-chatting.marketopiateam.com/fullchain.pem',
                 'local_pk' => '/etc/letsencrypt/live/backend-chatting.marketopiateam.com/privkey.pem',
                 'passphrase' => null,
+            ],
         ],
     ],
 
