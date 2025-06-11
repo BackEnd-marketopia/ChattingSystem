@@ -29,6 +29,7 @@ class ChatMessageService
     // Send a message to a chat
     public function sendMessage($chatId, $data)
     {
+        // dd($data);
         $messageData = [
             'chat_id' => $chatId,
             'sender_id' => $data['senderId'] ?? Auth::id(),

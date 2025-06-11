@@ -18,12 +18,12 @@ class ClientPackageItemRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'item_type' => 'required|string',
-            'item_type' => [
-                'required',
-                'string',
-                'unique:client_package_items,item_type,NULL,id,client_package_id,' . $this->client_package_id,
-            ],
+            'item_type' => 'required|string',
+            // 'item_type' => [
+            //     'required',
+            //     'string',
+            //     'unique:client_package_items,item_type,NULL,id,client_package_id,' . $this->client_package_id,
+            // ],
             'package_item_id' => 'nullable|exists:package_items,id',
             'client_package_id' => "nullable|exists:client_package,id",
             'content' => 'nullable|string',

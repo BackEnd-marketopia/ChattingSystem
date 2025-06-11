@@ -11,7 +11,6 @@ class ClientLimit extends Model
     protected $fillable = [
         'client_id',
         'client_package_id',
-        'client_package_item_id',
         'item_type',
         'edit_limit',
         'decline_limit'
