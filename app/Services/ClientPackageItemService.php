@@ -82,11 +82,11 @@ class ClientPackageItemService
 
         $allowed = PackageAllowedItem::where('package_item_id', $item->package_item_id)->first();
 
-        $acceptedCount = ItemStatusHistory::where('client_package_id', $item->id)
+        $acceptedCount = ItemStatusHistory::where('client_package_id', $item->client_package_id)
             ->where('item_id', $item->packageItem->type_id)
             ->where('status', 'accepted')
             ->count();
-
+        // dd($acceptedCount);
         if ($acceptedCount >= $allowed->allowed_count) {
             return [
                 'message' => 'Maximum accepted items reached for this package Item.',
@@ -234,7 +234,8 @@ class ClientPackageItemService
             'item_type' => $item->item_type,
             'client_package_id' => $item->client_package_id,
             'client_id' => Auth::id(),
-            'action_type' => $actionType,
+            'performed_by' => Auth::id(),
+            'action' => $actionType,
         ]);
     }
 }

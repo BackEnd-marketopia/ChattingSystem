@@ -28,6 +28,11 @@ class ClientLimitRequest extends FormRequest
         return [
             'client_id' => 'required|exists:users,id',
             'client_package_id' => 'required|exists:client_package,id',
+            'client_package_item_id' => [
+                'required', 
+                'exists:client_package_items,id',
+                'unique:client_limits,client_package_item_id,NULL,id,client_id,' . $this->client_id,
+            ],
             'item_type' => 'required|string',
             'edit_limit' => 'required|integer|min:0',
             'decline_limit' => 'required|integer|min:0',
