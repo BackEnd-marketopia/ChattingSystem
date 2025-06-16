@@ -88,10 +88,10 @@ class ClientPackageItemService
             ->count();
         // dd($acceptedCount);
         if ($acceptedCount >= $allowed->allowed_count) {
-            return [
+            return response([
                 'message' => 'Maximum accepted items reached for this package Item.',
                 'item' => null
-            ];
+            ], 429);
         }
 
         $item->status = 'accepted';
@@ -134,10 +134,10 @@ class ClientPackageItemService
         // dd($item->packageItem?->itemType->name);
         $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->packageItem->itemType->name);
         if (!$limit || $limit->edit_limit <= 0) {
-            return [
+            return response([
                 'message' => 'Edit limit reached.',
                 'item' => null
-            ];
+            ], 429);
         }
 
         $item->status = 'edited';
@@ -180,10 +180,10 @@ class ClientPackageItemService
 
         $limit = $this->clientLimitRepo->getByPackageAndType($item->client_package_id, $item->packageItem->itemType->name);
         if (!$limit || $limit->decline_limit <= 0) {
-            return [
+            return response([
                 'message' => 'Decline limit reached.',
                 'item' => null
-            ];
+            ], 429);
         }
 
         $item->status = 'declined';

@@ -130,6 +130,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('edit/{id}', [ClientLimitController::class, 'update'])->name('client-limits.update')->middleware('role:admin');
         Route::delete('/{id}', [ClientLimitController::class, 'destroy'])->name('client-limits.destroy')->middleware('role:admin');
 
+        // Remaining Limits
+        Route::get('/remaining-limits/{chatId}', [ClientLimitController::class, 'remainingLimitsbyChatId'])->name('client-limits.remainingLimits')->middleware('role:admin|team|client');
+
         Route::get('/{clientPackageId}', [ClientLimitController::class, 'remainingLimits'])->name('client-limits.remainingLimits')->middleware('role:admin|team|client');
         Route::post('/{clientPackageId}/decrement-edit', [ClientLimitController::class, 'decrementEdit'])->name('client-limits.decrementEdit')->middleware('role:admin|client');
         Route::post('/{clientPackageId}/decrement-decline', [ClientLimitController::class, 'decrementDecline'])->name('client-limits.decrementDecline')->middleware('role:admin|client');
