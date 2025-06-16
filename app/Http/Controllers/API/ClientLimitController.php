@@ -90,17 +90,26 @@ class ClientLimitController extends Controller
             return null;
         }
 
-        // dd($clientpackage);
-        $clientPackageItemController = app(\App\Http\Controllers\API\ClientPackageItemController::class);
-        $itemsResponse = $clientPackageItemController->index($clientpackage['id']);
+        // Get items directly from the main package, not from ClientPackageItemController
+        $package = $clientpackage['package'] ?? null;
+        $items = $package['items'] ?? [];
 
-        if ($itemsResponse instanceof \Illuminate\Http\JsonResponse) {
-            $itemsData = $itemsResponse->getData(true);
-            $items = $itemsData['data'] ?? [];
-        } else {
-            $items = $itemsResponse;
+        // Get the package ID from the client package
+        $packageId = $clientpackage['package_id'] ?? null;
+        $items = [];
+        if ($packageId) {
+            // Use correct relation name and null check
+            $package = \App\Models\Package::with('packageItems.itemType')->find($packageId);
+            if ($package && $package->packageItems) {
+                foreach ($package->packageItems as $item) {
+                    $itemType = $item->itemType ?? null;
+                    $items[] = [
+                        'id' => $item->id,
+                        'item_type' => $itemType ? $itemType->name : null,
+                    ];
+                }
+            }
         }
-
         // dd($items);
         $result = [];
         if (is_array($items) || is_object($items)) {
